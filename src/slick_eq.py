@@ -1,5 +1,5 @@
 import plugin
-
+import constants
 
 class SlickEq(plugin.Plugin):
 
