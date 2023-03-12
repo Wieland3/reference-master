@@ -4,7 +4,7 @@ from sklearn.preprocessing import MinMaxScaler
 import spectrum
 
 
-def song_distance(audio, reference, sr_audio, sr_ref, min_freq, max_freq):
+def song_distance(audio, reference, sr_audio, sr_ref):
     # this function should calculate the similarity between two songs
     # the songs are both numpy arrays
     # you can use the functions above to help you
@@ -26,14 +26,6 @@ def manhattan_distance(a, b):
     # a and b are both numpy arrays
     return np.sum(np.abs(a-b))
 
-
-def moving_average(vector, lookback):
-    # this function should calculate the moving average of a vector
-    # the lookback is the number of samples to look back
-    # the output should be the same size as the input
-    # the first lookback samples should be the same as the input
-    # the last lookback samples should be the same as the input
-    return np.convolve(vector, np.ones(lookback)/lookback, mode='same')
 
 if __name__ == "__main__":
     weight = np.exp(-np.arange(0, 128, 1) / 100)

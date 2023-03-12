@@ -15,6 +15,8 @@ def find_chorus(audio, sr, window_length):
     loudest = -100000
     for i in range(0, audio.shape[0], window_length):
         current_audio = audio[i:i + window_length]
+        if current_audio.shape[0] != window_length:
+            continue
         current_loudness = loudness.get_loudness(current_audio, sr)
         if current_loudness > loudest:
             loudest = current_loudness

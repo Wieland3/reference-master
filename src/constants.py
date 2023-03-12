@@ -9,16 +9,16 @@ N_PARAMS_TDR = 3
 PATH_TO_KAZROQ_PLUGIN = '../plugins/eq.vst3'
 PATH_TO_TDR_EQ_PLUGIN = '../plugins/tdr_eq.vst3'
 PATH_TO_MARVEL_EQ_PLUGIN = '../plugins/Marvel.vst3'
-PATH_TO_KCLIP_PLUGIN = '../plugins/KClip Zero.vst3'
+PATH_TO_NOVA_PLUGIN = '../plugins/TDR Nova.vst3'
 
 #Spectograms
 N_MELS = 256
 
 # Duration for amplitude - duration / amplitude + duration
-DURATION = 6
+DURATION = 4
 
 # Smoothing for Song Distance
-LOOKBACK = 10
+LOOKBACK = 20
 
 # Bins associated with the frequencies when bins = 128 and max_freq = 20000
 BINS = [2, 4, 10, 26, 54, 83, 112]

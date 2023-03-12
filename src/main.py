@@ -10,6 +10,8 @@ from sklearn.preprocessing import MinMaxScaler
 import spectrum
 import matplotlib.pyplot as plt
 import kazrog_eq
+import marvel_eq
+import nova_eq
 
 if __name__ == '__main__':
 
@@ -21,7 +23,7 @@ if __name__ == '__main__':
     n_params = constants.N_PARAMS_TDR
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/2.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/13.wav')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
     raw_loudness = loudness.get_loudness(raw_max, sr_raw)
@@ -37,32 +39,35 @@ if __name__ == '__main__':
     print("loudness after adjust", loudness.get_loudness(ref_loudness_adjusted, sr_ref))
     ref_mono, _ = audio_utils.preprocess_audio(ref_loudness_adjusted, sr_ref, None)
 
-    # Fit curves
-    low_bounds = [(min_setting, max_setting), (30,1000)]
-    mid_bounds = [(min_setting, max_setting), (100, 10000)]
-    high_bounds = [(min_setting, max_setting), (500, 20000)]
-    bounds = low_bounds + mid_bounds + high_bounds
 
-    #bounds = [(-8.0,8.0)] * 7
+    # Fit curves
+    #low_bounds = [(min_setting, max_setting), (30,250)]
+    #mid_bounds = [(min_setting, max_setting), (5000, 7500)]
+    #high_bounds = [(min_setting, max_setting), (2500, 20000)]
+    #bounds = low_bounds + mid_bounds + high_bounds
+
+    low_bounds = [(-17,17),(0.1,6),(30,250)]
+    low_mid_bounds = [(-17,17),(0.1,6),(250, 2500)]
+    high_mid_bounds = [(-17,17),(0.1,6),(2500, 10000)]
+    high_bounds = [(-17,17),(0.1,6),(10000, 20000)]
+    bounds = low_bounds + low_mid_bounds + high_mid_bounds + high_bounds
     start_time = time.time()
 
-    eq = slick_eq.SlickEq(path_to_eq_plugin, ["Bell", "Shelf"])
-    #eq = kazrog_eq.KazrogEq(constants.PATH_TO_KAZROQ_PLUGIN)
-    init_dist = audio_distance.song_distance(raw_mono, ref_mono, sr_raw, sr_ref, min_freq=0, max_freq=20000)
-    params = optimizer.dual_annealing_optimization(eq, bounds, raw_mono, ref_mono, sr_raw, sr_ref,
-                                                   min_freq=0, max_freq=20000, maxiter=100)
-    print(params)
+    #eq = slick_eq.SlickEq(path_to_eq_plugin, ["Bell", "Shelf"])
+    eq = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN)
+
+    init_dist = audio_distance.song_distance(raw_mono, ref_mono, sr_raw, sr_ref)
+    params = optimizer.dual_annealing_optimization(eq, bounds, raw_mono, ref_mono, sr_raw, sr_ref, maxiter=50)
     print("--- %s seconds ---" % (time.time() - start_time))
     print("Initial Distance", init_dist)
     print("Minimum Distance", params.fun)
     params = [round(x, 1) for x in params.x]
     print("final low params", params)
-
     eq.set_params(params)
+    eq.show_editor()
     processed = eq.process(raw_max, sr_raw)
 
     # Show EQ
-    eq.show_editor()
 
     # Save audio
     audio_utils.numpy_to_wav(processed, sr_raw, '../tracks/edited/processed.wav')
@@ -81,7 +86,8 @@ if __name__ == '__main__':
     spec_ref, freq = spectrum.create_spectrum(ref, sr_ref)
     spec_pro, freq = spectrum.create_spectrum(processed, sr_raw)
 
-    plt.plot(freq, spec_raw)
-    plt.plot(freq, spec_ref)
-    plt.plot(freq, spec_pro)
+    plt.plot(freq,spec_raw, label="raw")
+    plt.plot(freq,spec_ref, label="ref")
+    plt.plot(freq,spec_pro, label="processed")
+    plt.legend()
     plt.show()

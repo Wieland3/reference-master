@@ -7,6 +7,7 @@ class SlickEq(plugin.Plugin):
         super().__init__(plugin_path)
         self.plugin.low_shape = shapes[0]  # Shelf or Bell
         self.plugin.high_shape = shapes[1]  # Shelf or Bell
+        self.plugin.auto_gain = False
 
 
     def set_params(self, values):
