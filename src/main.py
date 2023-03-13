@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import kazrog_eq
 import marvel_eq
 import nova_eq
+import bsa_clipper
 
 if __name__ == '__main__':
 
@@ -63,7 +64,7 @@ if __name__ == '__main__':
     eq = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN)
 
     init_dist = audio_distance.song_distance(raw_mono, ref_mono, sr_raw, sr_ref)
-    params = optimizer.dual_annealing_optimization(eq, bounds, raw_mono, ref_mono, sr_raw, sr_ref, maxiter=50)
+    params = optimizer.dual_annealing_optimization(eq, bounds, raw_mono, ref_mono, sr_raw, sr_ref, maxiter=40)
     print("--- %s seconds ---" % (time.time() - start_time))
     print("Initial Distance", init_dist)
     print("Minimum Distance", params.fun)
@@ -73,11 +74,20 @@ if __name__ == '__main__':
     eq.show_editor()
     processed = eq.process(raw_max, sr_raw)
 
-    # Show EQ
+    processed_copy = processed.copy()
+    # Clipper
+    clipper = bsa_clipper.BSAClipper(constants.PATH_TO_CLIPPER)
+    setting = clipper.find_settings(processed_copy, sr_raw, ref_loudness).round(1)
+    print("clipper setting", setting)
+    clipper.set_params([setting])
+    processed = clipper.process(processed, sr_raw)
+    clipper.show_editor()
+    final_loudness = loudness.get_loudness(processed, sr_raw)
+    print("final loudness", final_loudness)
 
     # Save audio
     audio_utils.numpy_to_wav(processed, sr_raw, '../tracks/edited/processed.wav')
-    audio_utils.numpy_to_wav(ref_loudness_adjusted, sr_ref, '../tracks/edited/reference.wav')
+    audio_utils.numpy_to_wav(ref_max, sr_ref, '../tracks/edited/reference.wav')
     audio_utils.numpy_to_wav(raw_max, sr_raw, '../tracks/edited/raw.wav')
 
     # Load back audio
@@ -99,3 +109,6 @@ if __name__ == '__main__':
     plt.grid(True, which="both", ls="-", color='0.65')
     plt.legend()
     plt.show()
+
+
+

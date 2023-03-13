@@ -10,6 +10,7 @@ PATH_TO_KAZROQ_PLUGIN = '../plugins/eq.vst3'
 PATH_TO_TDR_EQ_PLUGIN = '../plugins/tdr_eq.vst3'
 PATH_TO_MARVEL_EQ_PLUGIN = '../plugins/Marvel.vst3'
 PATH_TO_NOVA_PLUGIN = '../plugins/TDR Nova.vst3'
+PATH_TO_CLIPPER = '../plugins/BSAClipper.vst3'
 
 #Spectograms
 N_MELS = 256
