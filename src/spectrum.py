@@ -7,7 +7,7 @@ import audio_distance
 import constants
 
 
-def create_spectrum(audio, sr, n_fft=4096, hop_length=1024):
+def create_spectrum(audio, sr, n_fft=8192, hop_length=2048):
     if np.isnan(audio).any() or np.isinf(audio).any() or np.isneginf(audio).any():
         zeros = np.zeros(len(audio))
         audio = zeros
@@ -28,13 +28,13 @@ def running_mean(x, N):
 
 if __name__ == '__main__':
     duration = 2
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/2.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/5.wav')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
     raw_loudness = loudness.get_loudness(raw_max, sr_raw)
     print("raw loudness", raw_loudness)
 
-    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/BreakTheFall.mp3')
+    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/LoseYourself.mp3')
     print("ref sr", sr_ref)
     ref_mono, ref_max = audio_utils.preprocess_audio(ref, sr_ref, duration)
     ref_loudness = loudness.get_loudness(ref_max, sr_ref)

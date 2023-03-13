@@ -1,3 +1,5 @@
+import librosa
+
 import audio_utils
 import optimizer
 import constants
@@ -23,14 +25,18 @@ if __name__ == '__main__':
     n_params = constants.N_PARAMS_TDR
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/13.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/5.wav')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
+    '''
+    if sr_raw != 44100:
+        raw_mono, sr_raw = librosa.resample(raw_mono, orig_sr=sr_raw, target_sr=44100)
+    '''
     raw_loudness = loudness.get_loudness(raw_max, sr_raw)
     print("raw loudness", raw_loudness)
 
     # Load reference track
-    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/BreakTheFall.mp3')
+    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/LoseYourself.mp3')
     print("ref sr", sr_ref)
 
     ref_mono, ref_max = audio_utils.preprocess_audio(ref, sr_ref, duration)
@@ -48,8 +54,8 @@ if __name__ == '__main__':
 
     low_bounds = [(-17,17),(0.1,6),(30,250)]
     low_mid_bounds = [(-17,17),(0.1,6),(250, 2500)]
-    high_mid_bounds = [(-17,17),(0.1,6),(2500, 10000)]
-    high_bounds = [(-17,17),(0.1,6),(10000, 20000)]
+    high_mid_bounds = [(-17,17),(0.1,6),(2500, 7500)]
+    high_bounds = [(-17,17),(0.1,6),(7500, 20000)]
     bounds = low_bounds + low_mid_bounds + high_mid_bounds + high_bounds
     start_time = time.time()
 
@@ -86,8 +92,10 @@ if __name__ == '__main__':
     spec_ref, freq = spectrum.create_spectrum(ref, sr_ref)
     spec_pro, freq = spectrum.create_spectrum(processed, sr_raw)
 
-    plt.plot(freq,spec_raw, label="raw")
-    plt.plot(freq,spec_ref, label="ref")
-    plt.plot(freq,spec_pro, label="processed")
+    plt.plot(freq, spec_raw, label="raw")
+    plt.plot(freq, spec_ref, label="ref")
+    plt.plot(freq, spec_pro, label="processed")
+    #plt.xscale('log')
+    plt.grid(True, which="both", ls="-", color='0.65')
     plt.legend()
     plt.show()

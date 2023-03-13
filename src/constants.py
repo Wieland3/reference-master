@@ -15,7 +15,7 @@ PATH_TO_NOVA_PLUGIN = '../plugins/TDR Nova.vst3'
 N_MELS = 256
 
 # Duration for amplitude - duration / amplitude + duration
-DURATION = 4
+DURATION = 5
 
 # Smoothing for Song Distance
 LOOKBACK = 20

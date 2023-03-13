@@ -9,10 +9,19 @@ def song_distance(audio, reference, sr_audio, sr_ref):
     # the songs are both numpy arrays
     # you can use the functions above to help you
     # return the similarity
-    power_audio, _ = spectrum.create_spectrum(audio, sr_audio)
-    power_ref, _ = spectrum.create_spectrum(reference, sr_ref)
-    distance = euclidean_distance(power_ref, power_audio)
-    return distance
+    power_audio, power_freq = spectrum.create_spectrum(audio, sr_audio)
+    power_ref, ref_freq = spectrum.create_spectrum(reference, sr_ref)
+    low_audio = power_audio[power_freq < 250]
+    low_ref = power_ref[ref_freq < 250]
+    low_distance = euclidean_distance(low_ref, low_audio)
+    mid_audio = power_audio[(power_freq > 250) & (power_freq < 7500)]
+    mid_ref = power_ref[(ref_freq > 250) & (ref_freq < 7500)]
+    mid_distance = euclidean_distance(mid_ref, mid_audio)
+    high_audio = power_audio[power_freq > 7500]
+    high_ref = power_ref[ref_freq > 7500]
+    high_distance = euclidean_distance(high_ref, high_audio)
+    return low_distance + mid_distance + high_distance
+    return low_distance * 4 + mid_distance * 0.13 + high_distance * 0.11
 
 
 def euclidean_distance(a, b):
