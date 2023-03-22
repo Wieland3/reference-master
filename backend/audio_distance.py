@@ -4,13 +4,13 @@ from sklearn.preprocessing import MinMaxScaler
 import spectrum
 
 
-def song_distance(audio, reference, sr_audio, sr_ref):
+def song_distance(audio, sr_audio, power_ref):
     # this function should calculate the similarity between two songs
     # the songs are both numpy arrays
     # you can use the functions above to help you
     # return the similarity
     power_audio, power_freq = spectrum.create_spectrum(audio, sr_audio)
-    power_ref, ref_freq = spectrum.create_spectrum(reference, sr_ref)
+    power_ref, ref_freq = power_ref
     low_audio = power_audio[power_freq < 250]
     low_ref = power_ref[ref_freq < 250]
     low_distance = euclidean_distance(low_ref, low_audio)

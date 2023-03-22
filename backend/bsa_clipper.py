@@ -1,5 +1,4 @@
 import plugin
-import constants
 import numpy as np
 import loudness
 import audio_utils
@@ -36,11 +35,15 @@ class BSAClipper(plugin.Plugin):
             if audio_crest <= ref_crest:
                 return gain
 
-    def find_settings(self, audio, sr, mode, ref_loudness=-7, ref_crest=2.8):
+    def find_set_settings(self, audio, sr, mode, ref_loudness=-7, ref_crest=2.8):
         if mode == "loudness":
-            return self.find_loudness_settings(audio, sr, ref_loudness)
+            params = self.find_loudness_settings(audio, sr, ref_loudness)
+            self.set_params([params])
+            return params
         elif mode == "crest":
-            return self.find_crest_settings(audio, sr, ref_crest)
+            params = self.find_crest_settings(audio, sr, ref_crest)
+            self.set_params([params])
+            return params
         else:
             raise ValueError("Invalid mode")
 

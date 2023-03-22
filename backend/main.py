@@ -1,10 +1,7 @@
-import librosa
-
 import audio_utils
 import optimizer
 import constants
 import time
-import numpy as np
 import loudness
 import audio_distance
 import spectrum
@@ -15,14 +12,10 @@ import bsa_clipper
 if __name__ == '__main__':
 
     # set constants
-    min_setting = constants.MIN_SETTING_TDR
-    max_setting = constants.MAX_SETTING_TDR
-    path_to_eq_plugin = constants.PATH_TO_TDR_EQ_PLUGIN
     duration = constants.DURATION
-    n_params = constants.N_PARAMS_TDR
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/20.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/9.wav')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
 
@@ -51,29 +44,18 @@ if __name__ == '__main__':
     print("crest raw", crest_raw)
     print("crest ref", crest_ref)
     # Fit curves
-    #low_bounds = [(min_setting, max_setting), (30,250)]
-    #mid_bounds = [(min_setting, max_setting), (5000, 7500)]
-    #high_bounds = [(min_setting, max_setting), (2500, 20000)]
-    #bounds = low_bounds + mid_bounds + high_bounds
 
     low_bounds = [(-17,17),(0.1,6),(30,250)]
     low_mid_bounds = [(-17,17),(0.1,6),(250, 2500)]
     high_mid_bounds = [(-17,17),(0.1,6),(2500, 7500)]
     high_bounds = [(-17,17),(0.1,6),(7500, 20000)]
     bounds = low_bounds + low_mid_bounds + high_mid_bounds + high_bounds
-    start_time = time.time()
 
-    #eq = slick_eq.SlickEq(path_to_eq_plugin, ["Bell", "Shelf"])
     eq = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN)
 
-    init_dist = audio_distance.song_distance(raw_mono, ref_mono, sr_raw, sr_ref)
-    params = optimizer.dual_annealing_optimization(eq, bounds, raw_mono, ref_mono, sr_raw, sr_ref, maxiter=40)
-    print("--- %s seconds ---" % (time.time() - start_time))
-    print("Initial Distance", init_dist)
-    print("Minimum Distance", params.fun)
-    params = [round(x, 1) for x in params.x]
-    print("final low params", params)
-    eq.set_params(params)
+    power_ref = spectrum.create_spectrum(ref_mono, sr_ref)
+    init_dist = audio_distance.song_distance(raw_mono, sr_raw, power_ref)
+    params = eq.find_set_settings(bounds, raw_mono, sr_raw, power_ref)
     eq.show_editor()
     processed = eq.process(raw_max, sr_raw)
 
@@ -81,9 +63,8 @@ if __name__ == '__main__':
 
     # Clipper
     clipper = bsa_clipper.BSAClipper(constants.PATH_TO_CLIPPER)
-    setting = clipper.find_settings(processed_copy, sr_raw, mode='crest', ref_crest=crest_ref).round(1)
+    setting = clipper.find_set_settings(processed_copy, sr_raw, mode='crest', ref_crest=crest_ref).round(1)
     print("clipper setting", setting)
-    clipper.set_params([setting])
     processed = clipper.process(processed, sr_raw)
     clipper.show_editor()
     final_loudness = loudness.get_loudness(processed, sr_raw)

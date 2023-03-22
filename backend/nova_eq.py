@@ -1,5 +1,7 @@
 import plugin
-import constants
+import optimizer
+import time
+
 
 class NovaEq(plugin.Plugin):
 
@@ -31,9 +33,12 @@ class NovaEq(plugin.Plugin):
         self.plugin.hp_active = True
         self.plugin.hp_frequency_hz = 30.0
 
-'''
-nova = NovaEq(constants.PATH_TO_NOVA_PLUGIN)
-nova.set_params([5.0, 6, 100.0, 4, 0.5, 1000.0, 3, 1.0, 2500.0, 2, 1.0, 10000.0])
-print(nova.plugin.parameters)
-nova.show_editor()
-'''
+    def find_set_settings(self, bounds, raw_mono, sr_raw, power_ref, maxiter=40, verbose=True):
+        start_time = time.time()
+        params = optimizer.dual_annealing_optimization(self, bounds, raw_mono, sr_raw, power_ref, maxiter=maxiter)
+        if verbose:
+            print("--- %s seconds ---" % (time.time() - start_time))
+        params = [round(x, 1) for x in params.x]
+        self.set_params(params)
+        return params
+

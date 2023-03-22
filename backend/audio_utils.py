@@ -30,8 +30,23 @@ def crest_factor(audio):
     # the sample rate is an integer
     # return the crest factor
     max = np.max(audio)
-    rms = np.sqrt(np.mean(np.square(audio)))
-    return max / rms
+    return max / rms(audio)
+
+
+def rms(audio):
+    # function to calculate the root mean square of an audio signal
+    # the audio signal is a numpy array
+    # the sample rate is an integer
+    # return the root mean square
+    return np.sqrt(np.mean(np.square(audio)))
+
+
+def average_time_between_transients(audio, sr):
+    # function to calculate the average time between transients of an audio signal
+    # the audio signal is a numpy array
+    # the sample rate is an integer
+    # return the average time between transients
+    return librosa.feature.tempogram(y=audio, sr=sr).shape[1] / sr
 
 
 def select_max_audio(audio, sr, length):
