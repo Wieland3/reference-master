@@ -26,18 +26,20 @@ if __name__ == '__main__':
     n_params = constants.N_PARAMS_TDR
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/5.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/20.wav')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
+
     '''
     if sr_raw != 44100:
-        raw_mono, sr_raw = librosa.resample(raw_mono, orig_sr=sr_raw, target_sr=44100)
+        raw_mono = librosa.resample(raw_mono, orig_sr=sr_raw, target_sr=44100)
+        raw_max = librosa.resample(raw_max, orig_sr=sr_raw, target_sr=44100)
     '''
     raw_loudness = loudness.get_loudness(raw_max, sr_raw)
     print("raw loudness", raw_loudness)
 
     # Load reference track
-    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/LoseYourself.mp3')
+    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/BreakTheFall.mp3')
     print("ref sr", sr_ref)
 
     ref_mono, ref_max = audio_utils.preprocess_audio(ref, sr_ref, duration)
@@ -47,6 +49,11 @@ if __name__ == '__main__':
     ref_mono, _ = audio_utils.preprocess_audio(ref_loudness_adjusted, sr_ref, None)
 
 
+    crest_raw = audio_utils.crest_factor(raw_mono)
+    crest_ref = audio_utils.crest_factor(ref_mono)
+
+    print("crest raw", crest_raw)
+    print("crest ref", crest_ref)
     # Fit curves
     #low_bounds = [(min_setting, max_setting), (30,250)]
     #mid_bounds = [(min_setting, max_setting), (5000, 7500)]
@@ -75,15 +82,17 @@ if __name__ == '__main__':
     processed = eq.process(raw_max, sr_raw)
 
     processed_copy = processed.copy()
+
     # Clipper
     clipper = bsa_clipper.BSAClipper(constants.PATH_TO_CLIPPER)
-    setting = clipper.find_settings(processed_copy, sr_raw, ref_loudness).round(1)
+    setting = clipper.find_settings(processed_copy, sr_raw, mode='crest', ref_crest=crest_ref).round(1)
     print("clipper setting", setting)
     clipper.set_params([setting])
     processed = clipper.process(processed, sr_raw)
     clipper.show_editor()
     final_loudness = loudness.get_loudness(processed, sr_raw)
     print("final loudness", final_loudness)
+    print("final crest", audio_utils.crest_factor(processed))
 
     # Save audio
     audio_utils.numpy_to_wav(processed, sr_raw, '../tracks/edited/processed.wav')

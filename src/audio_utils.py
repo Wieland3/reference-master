@@ -24,6 +24,16 @@ def find_chorus(audio, sr, window_length):
     return audio[loudest_i:loudest_i + window_length]
 
 
+def crest_factor(audio):
+    # function to calculate the crest factor of an audio signal
+    # the audio signal is a numpy array
+    # the sample rate is an integer
+    # return the crest factor
+    max = np.max(audio)
+    rms = np.sqrt(np.mean(np.square(audio)))
+    return max / rms
+
+
 def select_max_audio(audio, sr, length):
     # function to select the location of the amplitude and returns length seconds around this location
     max_amp = np.argmax(audio, axis=0)[0]

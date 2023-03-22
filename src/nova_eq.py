@@ -28,6 +28,8 @@ class NovaEq(plugin.Plugin):
         self.plugin.band_4_gain_db = values[9]  # -18.0 to 18.0
         self.plugin.band_4_q = values[10]  # 0.1 to 6.0
         self.plugin.band_4_frequency_hz = values[11]  # 10.0 to 40000.0
+        self.plugin.hp_active = True
+        self.plugin.hp_frequency_hz = 30.0
 
 '''
 nova = NovaEq(constants.PATH_TO_NOVA_PLUGIN)
