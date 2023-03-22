@@ -16,7 +16,7 @@ PATH_TO_CLIPPER = '../plugins/BSAClipper.vst3'
 N_MELS = 256
 
 # Duration for amplitude - duration / amplitude + duration
-DURATION = 5
+DURATION = 10
 
 # Smoothing for Song Distance
 LOOKBACK = 20

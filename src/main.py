@@ -7,12 +7,8 @@ import time
 import numpy as np
 import loudness
 import audio_distance
-import slick_eq
-from sklearn.preprocessing import MinMaxScaler
 import spectrum
 import matplotlib.pyplot as plt
-import kazrog_eq
-import marvel_eq
 import nova_eq
 import bsa_clipper
 
