@@ -11,17 +11,14 @@ def song_distance(audio, sr_audio, power_ref):
     # return the similarity
     power_audio, power_freq = spectrum.create_spectrum(audio, sr_audio)
     power_ref, ref_freq = power_ref
-    low_audio = power_audio[power_freq < 250]
-    low_ref = power_ref[ref_freq < 250]
-    low_distance = euclidean_distance(low_ref, low_audio)
-    mid_audio = power_audio[(power_freq > 250) & (power_freq < 7500)]
-    mid_ref = power_ref[(ref_freq > 250) & (ref_freq < 7500)]
-    mid_distance = euclidean_distance(mid_ref, mid_audio)
-    high_audio = power_audio[power_freq > 7500]
-    high_ref = power_ref[ref_freq > 7500]
-    high_distance = euclidean_distance(high_ref, high_audio)
-    return low_distance + mid_distance + high_distance
-    return low_distance * 4 + mid_distance * 0.13 + high_distance * 0.11
+    # Fit and transform minmax scaler to the power_ref and power_audio
+    #data = np.concatenate((power_ref, power_audio))
+    #scaler = MinMaxScaler()
+    #scaler.fit(data.reshape(-1, 1))
+    #power_ref = scaler.transform(power_ref.reshape(-1, 1)).reshape(-1)
+    #power_audio = scaler.transform(power_audio.reshape(-1, 1)).reshape(-1)
+    distance = euclidean_distance(power_ref, power_audio)
+    return distance
 
 
 def euclidean_distance(a, b):

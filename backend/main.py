@@ -8,6 +8,7 @@ import spectrum
 import matplotlib.pyplot as plt
 import nova_eq
 import bsa_clipper
+import slick_eq
 
 if __name__ == '__main__':
 
@@ -15,7 +16,7 @@ if __name__ == '__main__':
     duration = constants.DURATION
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/9.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/18.wav')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
 
@@ -43,23 +44,35 @@ if __name__ == '__main__':
 
     print("crest raw", crest_raw)
     print("crest ref", crest_ref)
-    # Fit curves
 
-    low_bounds = [(-17,17),(0.1,6),(30,250)]
-    low_mid_bounds = [(-17,17),(0.1,6),(250, 2500)]
-    high_mid_bounds = [(-17,17),(0.1,6),(2500, 7500)]
-    high_bounds = [(-17,17),(0.1,6),(7500, 20000)]
+    power_ref = spectrum.create_spectrum(ref_mono, sr_ref)
+    init_dist = audio_distance.song_distance(raw_mono, sr_raw, power_ref)
+    # Slick Eq
+    bounds = [(-18,18),(30,500),(-18,18),(500,7500),(-18,18),(7500,20000)]
+    slick = slick_eq.SlickEq(constants.PATH_TO_SLICK_EQ)
+    slick.find_set_settings(bounds, raw_mono, sr_raw, power_ref)
+    slick.show_editor()
+    raw_mono = slick.process(raw_mono, sr_raw)
+    processed_max = slick.process(raw_max, sr_raw)
+
+    # Nova Eq
+
+    low_bounds = [(-17,17),(0.1,6),(30,100)]
+    low_mid_bounds = [(-17,17),(0.1,6),(100, 250)]
+    high_mid_bounds = [(-17,17),(0.1,6),(250, 1000)]
+    high_bounds = [(-17,17),(0.1,6),(30, 20000)]
     bounds = low_bounds + low_mid_bounds + high_mid_bounds + high_bounds
 
     eq = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN)
 
-    power_ref = spectrum.create_spectrum(ref_mono, sr_ref)
-    init_dist = audio_distance.song_distance(raw_mono, sr_raw, power_ref)
     params = eq.find_set_settings(bounds, raw_mono, sr_raw, power_ref)
-    eq.show_editor()
-    processed = eq.process(raw_max, sr_raw)
-
+    processed = eq.process(processed_max, sr_raw)
+    processed_mono = audio_utils.preprocess_audio(processed, sr_raw, None)[0]
+    distance_after = audio_distance.song_distance(processed_mono, sr_raw, power_ref)
     processed_copy = processed.copy()
+    print("distance before", init_dist)
+    print("distance after", distance_after)
+    eq.show_editor()
 
     # Clipper
     clipper = bsa_clipper.BSAClipper(constants.PATH_TO_CLIPPER)
@@ -71,6 +84,8 @@ if __name__ == '__main__':
     print("final loudness", final_loudness)
     print("final crest", audio_utils.crest_factor(processed))
 
+    # clipper on raw max
+    raw_max = clipper.process(raw_max, sr_raw)
     # Save audio
     audio_utils.numpy_to_wav(processed, sr_raw, '../tracks/edited/processed.wav')
     audio_utils.numpy_to_wav(ref_max, sr_ref, '../tracks/edited/reference.wav')
@@ -91,7 +106,7 @@ if __name__ == '__main__':
     plt.plot(freq, spec_raw, label="raw")
     plt.plot(freq, spec_ref, label="ref")
     plt.plot(freq, spec_pro, label="processed")
-    #plt.xscale('log')
+    plt.xscale('log')
     plt.grid(True, which="both", ls="-", color='0.65')
     plt.legend()
     plt.show()
