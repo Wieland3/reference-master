@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import nova_eq
 import bsa_clipper
 import slick_eq
+import mjuc
 
 if __name__ == '__main__':
 
@@ -16,7 +17,7 @@ if __name__ == '__main__':
     duration = constants.DURATION
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/19.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/18.wav')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
 
@@ -42,10 +43,6 @@ if __name__ == '__main__':
 
     crest_raw = audio_utils.crest_factor(raw_mono)
 
-    interaural_raw = audio_utils.interaural_level_difference(raw_max)
-    interaural_ref = audio_utils.interaural_level_difference(ref_max)
-    print("interaural raw", interaural_raw)
-    print("interaural ref", interaural_ref)
     print("crest raw", crest_raw)
     print("crest ref", crest_ref)
 
@@ -53,12 +50,21 @@ if __name__ == '__main__':
     init_dist = audio_distance.song_distance(raw_mono, sr_raw, power_ref)
 
     # Slick Eq
-    #bounds = [(-6,6),(30,500),(-6,6),(500,7500),(-6,6),(7500,20000)]
+    #bounds = [(-18,18),(30,500),(-18,18),(500,7500),(-18,18),(7500,20000)]
     #slick = slick_eq.SlickEq(constants.PATH_TO_SLICK_EQ)
     #slick.find_set_settings(bounds, raw_mono, sr_raw, power_ref)
     #slick.show_editor()
-    #processed = slick.process(raw_max, sr_raw)
-    #raw_mono = audio_utils.preprocess_audio(processed, sr_raw, None)[0]
+    #raw_max = slick.process(raw_max, sr_raw)
+    #raw_mono = audio_utils.preprocess_audio(raw_max, sr_raw, None)[0]
+
+    # MJUC
+    mjuc = mjuc.MJUC(constants.PATH_TO_MJUC)
+    mjuc.find_set_settings(raw_max, sr_raw)
+    processed = mjuc.process(raw_max, sr_raw)
+    raw_mono = audio_utils.preprocess_audio(processed, sr_raw, None)[0]
+    loudness_after = loudness.get_loudness(processed, sr_raw)
+    print("loudness after", loudness_after)
+    mjuc.show_editor()
 
     # Nova Eq
     low_bounds = [(-17,17),(0.1,6),(30,100)]
@@ -67,7 +73,7 @@ if __name__ == '__main__':
     high_bounds = [(-17,17),(0.1,6),(7500, 20000)]
     bounds = low_bounds + low_mid_bounds + high_mid_bounds + high_bounds
 
-    eq = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN)
+    eq = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN, "High S")
 
     params = eq.find_set_settings(bounds, raw_mono, sr_raw, power_ref, mode='direct')
     processed = eq.process(raw_max, sr_raw)
@@ -79,7 +85,7 @@ if __name__ == '__main__':
     eq.show_editor()
 
 
-    eq2 = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN)
+    eq2 = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN, "Bell")
     params2 = eq2.find_set_settings(bounds, processed_mono, sr_raw, power_ref)
     processed = eq2.process(processed, sr_raw)
     eq2.show_editor()

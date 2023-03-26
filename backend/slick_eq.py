@@ -8,10 +8,10 @@ class SlickEq(plugin.Plugin):
 
     def __init__(self, plugin_path):
         super().__init__(plugin_path)
-        self.plugin.low_shape = "Bell"
+        self.plugin.low_shape = "Shelf"
         self.plugin.high_shape = "Shelf"
         self.plugin.hp_freq_hz = constants.HP_FREQ
-        self.plugin.eq_sat = True
+        self.plugin.eq_sat = False
         self.plugin.auto_gain = False
 
 

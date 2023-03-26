@@ -6,6 +6,7 @@ PATH_TO_NOVA_PLUGIN = '../plugins/TDR Nova.vst3'
 PATH_TO_KOTELNIKOV = '../plugins/TDR Kotelnikov.vst3'
 PATH_TO_CLIPPER = '../plugins/BSAClipper.vst3'
 PATH_TO_IMAGER = '../plugins/Ozone Imager 2.vst3'
+PATH_TO_MJUC = '../plugins/MJUCjr.vst3'
 
 # Duration for audio used for mastering
 DURATION = 5
