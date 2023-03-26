@@ -58,14 +58,6 @@ def rms(audio):
     return np.sqrt(np.mean(np.square(audio)))
 
 
-def average_time_between_transients(audio, sr):
-    # function to calculate the average time between transients of an audio signal
-    # the audio signal is a numpy array
-    # the sample rate is an integer
-    # return the average time between transients
-    return librosa.feature.tempogram(y=audio, sr=sr).shape[1] / sr
-
-
 def select_max_audio(audio, sr, length):
     # function to select the location of the amplitude and returns length seconds around this location
     max_amp = np.argmax(audio, axis=0)[0]

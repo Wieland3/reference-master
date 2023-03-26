@@ -12,9 +12,6 @@ def create_spectrum(audio, sr, n_fft=8192, hop_length=2048):
     power_mean = np.mean(abs **2, axis=1)
     power_dB = librosa.power_to_db(power_mean)
     smoothed = running_mean(power_dB, constants.LOOKBACK)
-    #freqs = running_mean(np.arange(0, 1 + n_fft / 2) * sr / n_fft, constants.LOOKBACK)
-    #smoothed = smoothed[freqs < 17000]
-    #freqs = freqs[freqs < 17000]
     freqs = librosa.cqt_frequencies(n_bins=abs.shape[0], fmin=constants.HP_FREQ, bins_per_octave=24)
     return smoothed, freqs[constants.LOOKBACK - 1:]
 

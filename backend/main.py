@@ -17,7 +17,7 @@ if __name__ == '__main__':
     duration = constants.DURATION
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/18.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/17.wav')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
 
@@ -30,11 +30,12 @@ if __name__ == '__main__':
     print("raw loudness", raw_loudness)
 
     # Load reference track
-    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/BreakTheFall.mp3')
+    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/kelly.mp3')
     print("ref sr", sr_ref)
 
     ref_mono, ref_max = audio_utils.preprocess_audio(ref, sr_ref, duration)
     ref_loudness = loudness.get_loudness(ref_max, sr_ref)
+    print("ref loudness", ref_loudness)
     ref_loudness_adjusted = loudness.equal_loudness(ref_max, sr_ref, raw_loudness)
     print("loudness after adjust", loudness.get_loudness(ref_loudness_adjusted, sr_ref))
     crest_ref = audio_utils.crest_factor(ref_mono)
@@ -65,6 +66,7 @@ if __name__ == '__main__':
     loudness_after = loudness.get_loudness(processed, sr_raw)
     print("loudness after", loudness_after)
     mjuc.show_editor()
+    raw = mjuc.process(raw, sr_raw)
 
     # Nova Eq
     low_bounds = [(-17,17),(0.1,6),(30,100)]
@@ -83,16 +85,17 @@ if __name__ == '__main__':
     print("distance before", init_dist)
     print("distance after", distance_after)
     eq.show_editor()
-
+    raw = eq.process(raw, sr_raw)
 
     eq2 = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN, "Bell")
     params2 = eq2.find_set_settings(bounds, processed_mono, sr_raw, power_ref)
     processed = eq2.process(processed, sr_raw)
     eq2.show_editor()
+    raw = eq2.process(raw, sr_raw)
 
     # Clipper
     clipper = bsa_clipper.BSAClipper(constants.PATH_TO_CLIPPER)
-    setting = clipper.find_set_settings(processed, sr_raw, mode='loudness', ref_crest=crest_ref).round(1)
+    setting = clipper.find_set_settings(processed, sr_raw, mode='loudness', ref_loudness=ref_loudness).round(1)
     print("clipper setting", setting)
     processed = clipper.process(processed, sr_raw)
     clipper.show_editor()
@@ -102,10 +105,12 @@ if __name__ == '__main__':
 
     # clipper on raw max
     raw_max = clipper.process(raw_max, sr_raw)
+    raw = clipper.process(raw, sr_raw)
     # Save audio
     audio_utils.numpy_to_wav(processed, sr_raw, '../tracks/edited/processed.wav')
     audio_utils.numpy_to_wav(ref_max, sr_ref, '../tracks/edited/reference.wav')
     audio_utils.numpy_to_wav(raw_max, sr_raw, '../tracks/edited/raw.wav')
+    audio_utils.numpy_to_wav(raw, sr_raw, '../tracks/edited/full.wav')
 
     # Load back audio
     raw, sr = audio_utils.load_audio_file('../tracks/edited/raw.wav')
