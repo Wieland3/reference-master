@@ -16,7 +16,7 @@ if __name__ == '__main__':
     duration = constants.DURATION
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/18.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/19.wav')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
 
@@ -36,47 +36,57 @@ if __name__ == '__main__':
     ref_loudness = loudness.get_loudness(ref_max, sr_ref)
     ref_loudness_adjusted = loudness.equal_loudness(ref_max, sr_ref, raw_loudness)
     print("loudness after adjust", loudness.get_loudness(ref_loudness_adjusted, sr_ref))
+    crest_ref = audio_utils.crest_factor(ref_mono)
     ref_mono, _ = audio_utils.preprocess_audio(ref_loudness_adjusted, sr_ref, None)
 
 
     crest_raw = audio_utils.crest_factor(raw_mono)
-    crest_ref = audio_utils.crest_factor(ref_mono)
 
+    interaural_raw = audio_utils.interaural_level_difference(raw_max)
+    interaural_ref = audio_utils.interaural_level_difference(ref_max)
+    print("interaural raw", interaural_raw)
+    print("interaural ref", interaural_ref)
     print("crest raw", crest_raw)
     print("crest ref", crest_ref)
 
     power_ref = spectrum.create_spectrum(ref_mono, sr_ref)
     init_dist = audio_distance.song_distance(raw_mono, sr_raw, power_ref)
+
     # Slick Eq
-    bounds = [(-18,18),(30,500),(-18,18),(500,7500),(-18,18),(7500,20000)]
-    slick = slick_eq.SlickEq(constants.PATH_TO_SLICK_EQ)
-    slick.find_set_settings(bounds, raw_mono, sr_raw, power_ref)
-    slick.show_editor()
-    raw_mono = slick.process(raw_mono, sr_raw)
-    processed_max = slick.process(raw_max, sr_raw)
+    #bounds = [(-6,6),(30,500),(-6,6),(500,7500),(-6,6),(7500,20000)]
+    #slick = slick_eq.SlickEq(constants.PATH_TO_SLICK_EQ)
+    #slick.find_set_settings(bounds, raw_mono, sr_raw, power_ref)
+    #slick.show_editor()
+    #processed = slick.process(raw_max, sr_raw)
+    #raw_mono = audio_utils.preprocess_audio(processed, sr_raw, None)[0]
 
     # Nova Eq
-
     low_bounds = [(-17,17),(0.1,6),(30,100)]
-    low_mid_bounds = [(-17,17),(0.1,6),(100, 250)]
-    high_mid_bounds = [(-17,17),(0.1,6),(250, 1000)]
-    high_bounds = [(-17,17),(0.1,6),(30, 20000)]
+    low_mid_bounds = [(-17,17),(0.1,6),(100, 1000)]
+    high_mid_bounds = [(-17,17),(0.1,6),(1000, 7500)]
+    high_bounds = [(-17,17),(0.1,6),(7500, 20000)]
     bounds = low_bounds + low_mid_bounds + high_mid_bounds + high_bounds
 
     eq = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN)
 
-    params = eq.find_set_settings(bounds, raw_mono, sr_raw, power_ref)
-    processed = eq.process(processed_max, sr_raw)
+    params = eq.find_set_settings(bounds, raw_mono, sr_raw, power_ref, mode='direct')
+    processed = eq.process(raw_max, sr_raw)
     processed_mono = audio_utils.preprocess_audio(processed, sr_raw, None)[0]
     distance_after = audio_distance.song_distance(processed_mono, sr_raw, power_ref)
-    processed_copy = processed.copy()
+
     print("distance before", init_dist)
     print("distance after", distance_after)
     eq.show_editor()
 
+
+    eq2 = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN)
+    params2 = eq2.find_set_settings(bounds, processed_mono, sr_raw, power_ref)
+    processed = eq2.process(processed, sr_raw)
+    eq2.show_editor()
+
     # Clipper
     clipper = bsa_clipper.BSAClipper(constants.PATH_TO_CLIPPER)
-    setting = clipper.find_set_settings(processed_copy, sr_raw, mode='crest', ref_crest=crest_ref).round(1)
+    setting = clipper.find_set_settings(processed, sr_raw, mode='loudness', ref_crest=crest_ref).round(1)
     print("clipper setting", setting)
     processed = clipper.process(processed, sr_raw)
     clipper.show_editor()

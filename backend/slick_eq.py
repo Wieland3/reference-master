@@ -11,7 +11,7 @@ class SlickEq(plugin.Plugin):
         self.plugin.low_shape = "Bell"
         self.plugin.high_shape = "Shelf"
         self.plugin.hp_freq_hz = constants.HP_FREQ
-        self.plugin.eq_sat = False
+        self.plugin.eq_sat = True
         self.plugin.auto_gain = False
 
 
@@ -26,15 +26,11 @@ class SlickEq(plugin.Plugin):
 
     def find_set_settings(self, bounds, raw_mono, sr_raw, power_ref, maxiter=constants.NUM_ITERATIONS, verbose=True):
         start_time = time.time()
-        params = optimizer.dual_annealing_optimization(self, bounds, raw_mono, sr_raw, power_ref, maxiter=maxiter)
+        params = optimizer.direct_optimization(self, bounds, raw_mono, sr_raw, power_ref, maxiter=maxiter)
         if verbose:
             print("Mininm distance", params.fun)
             print("--- %s seconds ---" % (time.time() - start_time))
         params = [round(x, 1) for x in params.x]
         self.set_params(params)
         return params
-
-eq = SlickEq(constants.PATH_TO_SLICK_EQ)
-eq.show_editor()
-print(eq.plugin.parameters)
 

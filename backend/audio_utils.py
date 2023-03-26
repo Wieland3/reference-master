@@ -24,6 +24,14 @@ def find_chorus(audio, sr, window_length):
     return audio[loudest_i:loudest_i + window_length]
 
 
+def interaural_level_difference(audio):
+    # function to calculate the interaural level difference of an audio signal
+    # the audio signal is a numpy array
+    # return the interaural level difference
+    left = audio[:, 0]
+    right = audio[:, 1]
+    return np.mean(np.abs(left - right))
+
 def crest_factor(audio):
     # function to calculate the crest factor of an audio signal
     # the audio signal is a numpy array
@@ -31,6 +39,15 @@ def crest_factor(audio):
     # return the crest factor
     max = np.max(audio)
     return max / rms(audio)
+
+
+def crest_factor_lufs(audio, sr):
+    # function to calculate the crest factor of an audio signal
+    # the audio signal is a numpy array
+    # the sample rate is an integer
+    # return the crest factor
+    max = np.max(audio)
+    return max / loudness.get_loudness(audio, sr)
 
 
 def rms(audio):

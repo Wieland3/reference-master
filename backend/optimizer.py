@@ -1,6 +1,8 @@
 import numpy as np
 import audio_distance
-from scipy.optimize import dual_annealing
+from scipy.optimize import dual_annealing, differential_evolution, direct
+from multiprocessing import Pool
+
 
 
 def objective(params, plugin, raw, sr_raw, power_ref):
@@ -11,8 +13,19 @@ def objective(params, plugin, raw, sr_raw, power_ref):
     return distance
 
 
+def parallel_objective(x):
+    return objective(x)
+
+
 def dual_annealing_optimization(plugin, bounds, raw, sr_raw, power_ref, maxiter):
     args = (plugin, raw, sr_raw, power_ref)
-    return dual_annealing(func=objective, bounds=bounds, args=args, maxiter=maxiter)
+    x0 = np.array([0.0, 1, 100, 0.0, 1, 1000, 0.0, 1, 5000, 0.0, 1, 7500])
+    return dual_annealing(func=objective, bounds=bounds, args=args, maxiter=maxiter, x0=x0)
+
+
+def direct_optimization(plugin, bounds, raw, sr_raw, power_ref, maxiter):
+    args = (plugin, raw, sr_raw, power_ref)
+    return direct(func=objective, bounds=bounds, args=args, maxiter=maxiter, f_min=0.0)
+
 
 

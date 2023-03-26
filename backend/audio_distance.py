@@ -17,9 +17,11 @@ def song_distance(audio, sr_audio, power_ref):
     #scaler.fit(data.reshape(-1, 1))
     #power_ref = scaler.transform(power_ref.reshape(-1, 1)).reshape(-1)
     #power_audio = scaler.transform(power_audio.reshape(-1, 1)).reshape(-1)
-    distance = euclidean_distance(power_ref, power_audio)
+    distance = mse(power_ref, power_audio)
     return distance
 
+def mse(a, b):
+    return np.mean((a - b) ** 2)
 
 def euclidean_distance(a, b):
     # this function should calculate the euclidean distance between two average spectogram vectors
