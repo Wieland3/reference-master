@@ -8,7 +8,7 @@ class BSAClipper(plugin.Plugin):
 
     def __init__(self, plugin_path):
         super().__init__(plugin_path)
-        self.plugin.threshold_db = -2
+        self.plugin.threshold_db = -1.2
 
     def set_params(self, values):
         self.plugin.gain_db = values[0]  # 0 - 24

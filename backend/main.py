@@ -17,7 +17,7 @@ if __name__ == '__main__':
     duration = constants.DURATION
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/17.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/18.wav')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
 
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     print("raw loudness", raw_loudness)
 
     # Load reference track
-    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/kelly.mp3')
+    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/02 - Sound of Madness.mp3')
     print("ref sr", sr_ref)
 
     ref_mono, ref_max = audio_utils.preprocess_audio(ref, sr_ref, duration)
