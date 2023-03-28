@@ -4,24 +4,52 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.css" integrity="sha512-SI0aF82pT58nyOjCNfyeE2Y5/KHId8cLIX/1VYzdjTRs0HPNswsJR+aLQYSWpb88GDJieAgR4g1XWZvUROQv1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css">
     <style>
-
-
+        .rounded {
+            border-radius: 16px;
+        }
+        .background {
+            background-color:#2596be;
+        }
     </style>
 </head>
 <body>
-<div class="file is-boxed">
-  <label class="file-label">
-    <input class="file-input" type="file" name="resume">
-    <span class="file-cta">
-      <span class="file-icon">
-        <i class="fas fa-upload"></i>
-      </span>
-      <span class="file-label">
-        Choose a file…
-      </span>
-    </span>
-  </label>
-</div>
+   <section class="hero background is-fullheight">
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <h1 class="title is-1">
+            Online Master Your Track
+          </h1>
+          <h2 class="subtitle is-4">
+            Upload your track and get your song mastered for free.
+          </h2>
+          <br>
+          <div class="file is-boxed is-centered">
+            <label class="file-label rounded">
+              <input class="file-input rounded" type="file" name="resume">
+              <span class="file-cta">
+                <span class="file-icon">
+                  <i class="fas fa-thin fa-upload"></i>
+                </span>
+                <span class="file-label">
+                  Upload Your Song
+                </span>
+              </span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+<section class="section">
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-half">
+            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/452065565&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
 </body>
 </html>
