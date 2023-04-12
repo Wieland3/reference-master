@@ -12,7 +12,8 @@ class Plugin:
         pass
 
     def process(self, audio, sr):
-        return self.plugin.process(audio, sr)
+        pro = self.plugin.process(audio, sr, reset=False)
+        return pro
 
     def show_editor(self):
         self.plugin.show_editor()

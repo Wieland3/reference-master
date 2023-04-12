@@ -1,8 +1,9 @@
+import sys
+sys.path.append('../')
 import numpy as np
-import audio_distance
 from scipy.optimize import dual_annealing, differential_evolution, direct
-import audio_utils
-import loudness
+from backend import audio_distance
+
 
 def objective(params, plugin, raw, sr_raw, power_ref):
     plugin.set_params(params)

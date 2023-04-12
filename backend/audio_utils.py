@@ -1,7 +1,10 @@
-import librosa
+import os
+import sys
+sys.path.append('../')
 import soundfile as sf
 import numpy as np
-import loudness
+from backend import loudness
+
 
 
 def load_audio_file(file_path):
@@ -13,7 +16,7 @@ def load_audio_file(file_path):
 def find_chorus(audio, sr, window_length):
     loudest_i = 0
     loudest = -100000
-    for i in range(0, audio.shape[0], window_length):
+    for i in range(0, audio.shape[0], sr):
         current_audio = audio[i:i + window_length]
         if current_audio.shape[0] != window_length:
             continue
@@ -32,6 +35,7 @@ def interaural_level_difference(audio):
     right = audio[:, 1]
     return np.mean(np.abs(left - right))
 
+
 def crest_factor(audio):
     # function to calculate the crest factor of an audio signal
     # the audio signal is a numpy array
@@ -39,15 +43,6 @@ def crest_factor(audio):
     # return the crest factor
     max = np.max(audio)
     return max / rms(audio)
-
-
-def crest_factor_lufs(audio, sr):
-    # function to calculate the crest factor of an audio signal
-    # the audio signal is a numpy array
-    # the sample rate is an integer
-    # return the crest factor
-    max = np.max(audio)
-    return max / loudness.get_loudness(audio, sr)
 
 
 def rms(audio):
@@ -58,20 +53,12 @@ def rms(audio):
     return np.sqrt(np.mean(np.square(audio)))
 
 
-def select_max_audio(audio, sr, length):
-    # function to select the location of the amplitude and returns length seconds around this location
-    max_amp = np.argmax(audio, axis=0)[0]
-    start = max_amp - (sr * length)
-    end = max_amp + (sr * length)
-    return audio[start:end, :]
-
-
 def preprocess_audio(audio, sr, duration=None):
     # function to preprocess the audio
     # this function should be called before the audio is passed to the optimizer
     # this function should return the preprocessed audi and the sample rate of the audio
     if duration is not None:
-        max = find_chorus(audio, sr, sr * duration)
+        max = find_chorus(audio, sr, duration * sr)
     else:
         max = audio
     #reshaped = max.reshape(2, -1)

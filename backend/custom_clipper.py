@@ -1,41 +1,39 @@
-import sys
-sys.path.append('../')
 import numpy as np
-from backend import plugin
-from backend import loudness
+import librosa
 from backend import audio_utils
+from backend import loudness
 
 
-class BSAClipper(plugin.Plugin):
+class CustomClipper():
 
-    def __init__(self, plugin_path):
-        super().__init__(plugin_path)
-        self.plugin.threshold_db = -1.2
+    def __init__(self):
+        self.threshold = 10 ** (-1.2 / 20)
+        self.gain = 0
 
     def set_params(self, values):
-        self.plugin.gain_db = values[0]  # 0 - 24
+        self.gain = values[0]
+
+    def process(self, audio):
+        for channel in range(audio.shape[1]):
+            max_value = np.max(np.abs(audio))
+            audio = audio / max_value
+            audio = audio * 10 ** (self.gain / 20)
+            audio[audio[:,channel] > self.threshold, channel] = self.threshold
+        return audio
 
     def find_loudness_settings(self, audio, sr, ref_loudness):
         search_space = np.linspace(0, 24, 1000)
         for gain in search_space:
             audio_copy = audio.copy()
             self.set_params([gain])
-            audio_copy = self.process(audio_copy, sr)
+            audio_copy = self.process(audio_copy)
             audio_loudness = loudness.get_loudness(audio_copy, sr)
             print("audio_loudness: ", audio_loudness, "ref_loudness: ", ref_loudness, "gain: ", gain)
             if audio_loudness >= ref_loudness:
                 return gain
 
     def find_crest_settings(self, audio, sr, ref_crest):
-        search_space = np.linspace(0, 24, 1000)
-        for gain in search_space:
-            audio_copy = audio.copy()
-            self.set_params([gain])
-            audio_copy = self.process(audio_copy, sr)
-            audio_crest = audio_utils.crest_factor(audio_copy)
-            print("audio_crest: ", audio_crest, "ref_crest: ", ref_crest, "gain: ", gain)
-            if audio_crest <= ref_crest:
-                return gain
+        pass
 
     def find_set_settings(self, audio, sr, mode, ref_loudness=-7, ref_crest=2.8):
         if mode == "loudness":
@@ -48,4 +46,3 @@ class BSAClipper(plugin.Plugin):
             return params
         else:
             raise ValueError("Invalid mode")
-

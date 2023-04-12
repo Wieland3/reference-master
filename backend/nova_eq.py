@@ -1,7 +1,9 @@
-import plugin
-import optimizer
+import sys
+sys.path.append('../')
+from backend import plugin
+from backend import optimizer
+from backend import constants
 import time
-import constants
 
 
 class NovaEq(plugin.Plugin):

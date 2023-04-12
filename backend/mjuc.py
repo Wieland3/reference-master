@@ -1,13 +1,15 @@
-import plugin
-import constants
+import sys
+sys.path.append('../')
+from backend import plugin
+from backend import constants
+from backend import loudness
 import numpy as np
-import loudness
 
 
 class MJUC(plugin.Plugin):
     def __init__(self, plugin_path):
         super().__init__(plugin_path)
-        self.plugin.timing = "auto"
+        self.plugin.timing = "fast"
 
     def set_params(self, values):
         self.plugin.compress = values[0]  # 0 - 48

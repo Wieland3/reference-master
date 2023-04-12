@@ -1,7 +1,7 @@
+import sys
+sys.path.append('../')
 import numpy as np
-import constants
-from sklearn.preprocessing import MinMaxScaler
-import spectrum
+from backend import spectrum
 
 
 def song_distance(audio, sr_audio, power_ref):

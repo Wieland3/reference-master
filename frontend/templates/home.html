@@ -10,46 +10,68 @@
         .rounded {
             border-radius: 16px;
         }
-        .background {
-            background-color:#2596be;
+        .purple {
+            background-color:#501537;
         }
+        .white {
+            color: #E7ECEF;
+        }
+        .blue {
+            color: #28536B;
+        }
+        .gray {
+            color: #6B7F82;
+        }
+        .magenta {
+            color: #922D50;
+        }
+        .upload-button{
+            background-color: #501537;
+            color: #E7ECEF;
+            border-radius: 16px;
+        }
+
     </style>
 </head>
 <body>
-   <section class="hero background is-fullheight">
+   <section class="hero purple is-fullheight">
       <div class="hero-body">
         <div class="container has-text-centered">
-          <h1 class="title is-1">
-            Online Master Your Track
+          <h1 class="title is-1 white">
+            Master Your Song Online
           </h1>
-          <h2 class="subtitle is-4">
+          <h2 class="subtitle is-5 white">
             Upload your track and get your song mastered for free.
           </h2>
           <br>
-          <div class="file is-boxed is-centered">
-            <label class="file-label rounded">
-              <input class="file-input rounded" type="file" name="resume">
-              <span class="file-cta">
-                <span class="file-icon">
-                  <i class="fas fa-thin fa-upload"></i>
-                </span>
-                <span class="file-label">
-                  Upload Your Song
-                </span>
-              </span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </section>
-<section class="section">
-      <div class="container">
-        <div class="columns is-centered">
-          <div class="column is-half">
-            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/452065565&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
-          </div>
-        </div>
-      </div>
-    </section>
+            <div class="file is-boxed is-centered">
+                <label class="file-label">
+                    <form action="/upload" method="POST" enctype="multipart/form-data">
+                        <br>
+                        <div class="field">
+                            <label class="label white">E-Mail</label>
+                            <div class="control">
+                                <input class="input" type="text" name="email" placeholder="example@example.com">
+                            </div>
+                        </div>
+                        <div class="file is-boxed is-normal">
+                            <label class="file-label">
+                                <input class="file-input" type="file" name="file">
+                                <span class="file-cta">
+                              <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                              </span>
+                              <span class="file-label">
+                                Upload Your Track
+                              </span>
+                            </span>
+                            </label>
+                        </div>
+                        <br>
+                        <input type="submit" class="button" value="Upload" name="submit">
+                    </form>
+                </label>
+            </div>
+   </section>
 </body>
 </html>

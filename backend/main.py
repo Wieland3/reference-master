@@ -1,15 +1,13 @@
 import audio_utils
-import optimizer
 import constants
-import time
 import loudness
 import audio_distance
 import spectrum
 import matplotlib.pyplot as plt
 import nova_eq
 import bsa_clipper
-import slick_eq
 import mjuc
+import custom_clipper
 
 if __name__ == '__main__':
 
@@ -17,7 +15,7 @@ if __name__ == '__main__':
     duration = constants.DURATION
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/18.wav')
+    raw, sr_raw = audio_utils.load_audio_file('../tracks/raw_tracks/22.mp3')
     print("raw sr", sr_raw)
     raw_mono, raw_max = audio_utils.preprocess_audio(raw, sr_raw, duration)
 
@@ -30,7 +28,7 @@ if __name__ == '__main__':
     print("raw loudness", raw_loudness)
 
     # Load reference track
-    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/02 - Sound of Madness.mp3')
+    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/01 - Nightmare [Explicit].mp3')
     print("ref sr", sr_ref)
 
     ref_mono, ref_max = audio_utils.preprocess_audio(ref, sr_ref, duration)
@@ -78,7 +76,7 @@ if __name__ == '__main__':
     eq = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN, "High S")
 
     params = eq.find_set_settings(bounds, raw_mono, sr_raw, power_ref, mode='direct')
-    processed = eq.process(raw_max, sr_raw)
+    processed = eq.process(processed, sr_raw)
     processed_mono = audio_utils.preprocess_audio(processed, sr_raw, None)[0]
     distance_after = audio_distance.song_distance(processed_mono, sr_raw, power_ref)
 
@@ -87,25 +85,27 @@ if __name__ == '__main__':
     eq.show_editor()
     raw = eq.process(raw, sr_raw)
 
+    '''
     eq2 = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN, "Bell")
     params2 = eq2.find_set_settings(bounds, processed_mono, sr_raw, power_ref)
     processed = eq2.process(processed, sr_raw)
     eq2.show_editor()
     raw = eq2.process(raw, sr_raw)
+    '''
 
     # Clipper
-    clipper = bsa_clipper.BSAClipper(constants.PATH_TO_CLIPPER)
+    clipper = custom_clipper.CustomClipper()
     setting = clipper.find_set_settings(processed, sr_raw, mode='loudness', ref_loudness=ref_loudness).round(1)
     print("clipper setting", setting)
-    processed = clipper.process(processed, sr_raw)
-    clipper.show_editor()
+    processed = clipper.process(processed)
+    #clipper.show_editor()
     final_loudness = loudness.get_loudness(processed, sr_raw)
     print("final loudness", final_loudness)
     print("final crest", audio_utils.crest_factor(processed))
 
     # clipper on raw max
-    raw_max = clipper.process(raw_max, sr_raw)
-    raw = clipper.process(raw, sr_raw)
+    #raw_max = clipper.process(raw_max)
+    raw = clipper.process(raw)
     # Save audio
     audio_utils.numpy_to_wav(processed, sr_raw, '../tracks/edited/processed.wav')
     audio_utils.numpy_to_wav(ref_max, sr_ref, '../tracks/edited/reference.wav')

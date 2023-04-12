@@ -154,3 +154,5 @@ cython_debug/
 #Folders 
 /plugins
 /tracks
+/uploads
+/mastered
