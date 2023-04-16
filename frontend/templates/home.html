@@ -6,6 +6,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.css" integrity="sha512-SI0aF82pT58nyOjCNfyeE2Y5/KHId8cLIX/1VYzdjTRs0HPNswsJR+aLQYSWpb88GDJieAgR4g1XWZvUROQv1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css">
+
+    <!-- mobile viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- seo -->
+    <meta name="description" content="Master Your Song Online">
+    <meta name="keywords" content="Mastering, Master, Song, Online, Free">
+    <meta name="author" content="Master Your Song Online">
+
     <style>
         .rounded {
             border-radius: 16px;
@@ -50,7 +59,7 @@
                         <br>
                         <div class="file is-boxed is-normal">
                             <label class="file-label">
-                                <input class="file-input" type="file" name="file">
+                                <input class="file-input" type="file" name="file" id="uploadInput">
                                 <span class="file-cta">
                               <span class="file-icon">
                                 <i class="fas fa-upload"></i>
@@ -62,10 +71,22 @@
                             </label>
                         </div>
                         <br>
-                        <input type="submit" class="button" value="Upload" name="submit">
                     </form>
                 </label>
             </div>
+        </div>
+      </div>
    </section>
+
+<script>
+    window.addEventListener("load", () => {
+        const form = document.querySelector("form");
+        const uploadInput = document.querySelector("#uploadInput");
+
+        uploadInput.addEventListener("change", () => {
+            form.submit();
+        });
+    })
+</script>
 </body>
 </html>

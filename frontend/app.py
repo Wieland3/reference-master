@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect, url_for, jsonify
+from flask import Flask, request, render_template, redirect, url_for, jsonify, send_file
 import webapp_constants
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -38,12 +38,15 @@ def upload_file():
 def upload_done(filename):
     return render_template('upload_done.html', filename=filename)
 
-@app.route("/check_file")
-def check_file():
-  filename = request.args.get("filename")
-  exists = os.path.isfile(os.path.join("/mastered", filename))
+@app.route("/check_file/<filename>")
+def check_file(filename):
+  exists = os.path.isfile(os.path.join("../mastered", filename))
   return jsonify(exists=exists)
 
+@app.route("/download/<filename>")
+def download(filename):
+  filename = os.path.join("../mastered", filename)
+  return send_file(filename, as_attachment=True)
 
 def process_file(filename):
     print("STARTING MASTERING")

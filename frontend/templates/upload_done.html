@@ -3,29 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.css" integrity="sha512-SI0aF82pT58nyOjCNfyeE2Y5/KHId8cLIX/1VYzdjTRs0HPNswsJR+aLQYSWpb88GDJieAgR4g1XWZvUROQv1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.css"
+          integrity="sha512-SI0aF82pT58nyOjCNfyeE2Y5/KHId8cLIX/1VYzdjTRs0HPNswsJR+aLQYSWpb88GDJieAgR4g1XWZvUROQv1A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css">
+
+    <!-- mobile viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- seo -->
+    <meta name="description" content="Master Your Song Online">
+    <meta name="keywords" content="Mastering, Master, Song, Online, Free">
+    <meta name="author" content="Master Your Song Online">
+
     <style>
         .rounded {
             border-radius: 16px;
         }
+
         .purple {
-            background-color:#501537;
+            background-color: #501537;
         }
+
         .white {
             color: #E7ECEF;
         }
+
         .blue {
             color: #28536B;
         }
+
         .gray {
             color: #6B7F82;
         }
+
         .magenta {
             color: #922D50;
         }
-        .upload-button{
+
+        .upload-button {
             background-color: #501537;
             color: #E7ECEF;
             border-radius: 16px;
@@ -34,17 +51,76 @@
     </style>
 </head>
 <body>
-   <section class="hero purple is-fullheight">
-      <div class="hero-body">
+<section class="hero purple is-fullheight">
+    <div class="hero-body">
         <div class="container has-text-centered">
-          <h1 class="title is-1 white">
-            Your Song is Being Mastered!
-          </h1>
-          <h2 class="subtitle is-5 white">
-            This will take around 2 minutes. If the mastering is ready your file will be downloaded.
-          </h2>
+            <h1 class="title is-1 white">
+                Your Song is Being Mastered!
+            </h1>
+            <h2 class="subtitle is-5 white">
+                This will take around 2 minutes. If the mastering is ready your file will be downloaded.
+            </h2>
+            <div class="container">
+                <div class="" id="audio-holder-original"></div>
+                <div class="" id="audio-holder-mastered"></div>
+            </div>
+        </div>
+    </div>
+</section>
 
-   </section>
+<!-- script for checking if the file is ready -->
+<script>
+    window.addEventListener("load", () => {
+        // get id
+        const id = window.location.href.split("/").pop();
+
+        const pollingInterval = setInterval(() => {
+            // make api call
+            const checkFileEndpointUrl = "/check_file/" + id;
+            fetch(checkFileEndpointUrl)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.exists) {
+                        // remove interval
+                        clearInterval(pollingInterval)
+
+                        // build urls
+                        const downloadURL = "/download/" + id
+
+                        // download file
+                        window.location.href = downloadURL
+
+                        // create new audio element
+                        const audioHolderMastered = document.querySelector("#audio-holder-mastered")
+                        const audio = addAudioElement(downloadURL, audioHolderMastered)
+
+                    }
+                });
+        }, 10 * 1000)
+    })
+
+    const addAudioElement = (src, container, type = "audio/wav") => {
+        // create audio element
+        const audio = document.createElement("audio");
+
+        // set source
+        audio.controls = 'controls';
+        audio.setAttribute("type", type)
+        audio.className = ""
+
+        // add to container
+        container.appendChild(audio)
+
+        // set source
+        setTimeout(() => {
+            audio.src = src
+        }, 150)
+
+        // for potential later usage
+        return audio
+    }
+</script>
+
 </body>
 <script>
 </script>
