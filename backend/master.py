@@ -8,6 +8,8 @@ from backend import spectrum
 from backend import nova_eq
 from backend import custom_clipper
 from backend import mjuc
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 def master(audiofile):
@@ -57,11 +59,16 @@ def master(audiofile):
 
     raw = eq.process(raw, sr_raw)  # Apply Eq to entire track
 
+    print("max before clip", np.max(raw))
+    print("min before clip", np.min(raw))
     # Clipper
     clipper = custom_clipper.CustomClipper()
-    clipper.find_set_settings(raw_max_stereo, sr_raw, mode='loudness', ref_loudness=ref_loudness)
+    clipper.find_set_settings(raw_max_stereo, sr_raw, mode='loudness', ref_loudness=-7)
 
-    raw = clipper.process(raw)  # Apply Clipper to entire track
+    raw = clipper.process(raw, sr_raw)  # Apply Clipper to entire track
+
+    print(np.max(raw))
+    print(np.min(raw))
 
     # Save audio
     audio_utils.numpy_to_wav(raw, sr_raw, os.path.join("../mastered", audiofile))

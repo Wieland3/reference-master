@@ -1,11 +1,11 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, jsonify
 import webapp_constants
 import os
 from concurrent.futures import ThreadPoolExecutor
+import uuid
 
 import sys
 sys.path.append('../')
-
 from backend import master
 
 executor = ThreadPoolExecutor(1)
@@ -21,18 +21,28 @@ def home():
 def upload_file():
     # Get request inputs
     file = request.files['file']
-    email = request.form['email']
 
+    id = str(uuid.uuid4())
 
     # Save the file to disk
-    filename = file.filename
+    filename = id + '.wav'
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
     # Process file in background thread
     executor.submit(process_file, filename)
 
     # Return a response to the user
-    return render_template('upload_done.html')
+    return redirect(url_for('upload_done', filename=filename))
+
+@app.route('/uploaded/<filename>')
+def upload_done(filename):
+    return render_template('upload_done.html', filename=filename)
+
+@app.route("/check_file")
+def check_file():
+  filename = request.args.get("filename")
+  exists = os.path.isfile(os.path.join("/mastered", filename))
+  return jsonify(exists=exists)
 
 
 def process_file(filename):

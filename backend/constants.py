@@ -4,9 +4,7 @@
 PATH_TO_SLICK_EQ = '../plugins/tdr_eq.vst3'
 PATH_TO_NOVA_PLUGIN = '../plugins/TDR Nova.vst3'
 PATH_TO_CLIPPER = '../plugins/BSAClipper.vst3'
-PATH_TO_IMAGER = '../plugins/Ozone Imager 2.vst3'
 PATH_TO_MJUC = '../plugins/MJUCjr.vst3'
-PATH_TO_KCLIP = '../plugins/KClip Zero.vst3'
 
 PATH_TO_WEBAPP_UPLOADS = '../frontend/uploads'
 
