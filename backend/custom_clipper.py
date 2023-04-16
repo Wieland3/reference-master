@@ -1,22 +1,33 @@
 import numpy as np
-import librosa
-from backend import audio_utils
 from backend import loudness
 
 
-class CustomClipper():
+class CustomClipper:
 
     def __init__(self):
+        """
+        This class is a custom clipper that is used to clip the audio to a certain loudness
+        """
         self.threshold = 10 ** (-1.2 / 20)
         self.gain = 0
         self.fade_in_duration = 0.1
 
     def set_params(self, values):
+        """
+        Set the parameters of the clipper
+        :param values: list of values to set the parameters to
+        """
         self.gain = values[0]
 
     def process(self, audio, sr):
+        """
+        Process the audio with the clipper
+        :param audio: audio to process
+        :param sr: sample rate of the audio
+        :return: processed audio
+        """
+        # create a fade in window:
         fade_in_samples = int(self.fade_in_duration * sr)
-        # Create an exponential fade-in window
         fade_in_window = np.exp(np.linspace(-5, 0, fade_in_samples))
 
         # append 0.1 seconds of silence in the beginning of the audio:
@@ -31,6 +42,13 @@ class CustomClipper():
         return audio
 
     def find_loudness_settings(self, audio, sr, ref_loudness):
+        """
+        Find the settings for the clipper that will result in a certain loudness
+        :param audio: audio to process
+        :param sr: sample rate of the audio
+        :param ref_loudness: loudness target
+        :return: gain parameter which will result in the target loudness
+        """
         search_space = np.linspace(0, 24, 1000)
         for gain in search_space:
             audio_copy = audio.copy()
@@ -45,6 +63,16 @@ class CustomClipper():
         pass
 
     def find_set_settings(self, audio, sr, mode, ref_loudness=-7, ref_crest=2.8):
+        """
+        Find the settings for the clipper that will result in a certain loudness or crest factor and
+        set the parameters of the clipper to those values
+        :param audio: audio to process
+        :param sr: sample rate of the audio
+        :param mode: mode to use to find the settings, can be "loudness" or "crest"
+        :param ref_loudness: target loudness
+        :param ref_crest: target crest factor
+        :return: parameters that will result in the target loudness or crest factor
+        """
         if mode == "loudness":
             params = self.find_loudness_settings(audio, sr, ref_loudness)
             self.set_params([params])

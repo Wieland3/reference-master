@@ -5,7 +5,6 @@ import audio_distance
 import spectrum
 import matplotlib.pyplot as plt
 import nova_eq
-import bsa_clipper
 import mjuc
 import custom_clipper
 

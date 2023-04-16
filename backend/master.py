@@ -1,6 +1,4 @@
 import os
-import sys
-sys.path.append('../')
 from backend import audio_utils
 from backend import constants
 from backend import loudness
@@ -9,7 +7,6 @@ from backend import nova_eq
 from backend import custom_clipper
 from backend import mjuc
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def master(audiofile):

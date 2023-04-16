@@ -1,19 +1,26 @@
-import os
-import sys
-sys.path.append('../')
 import soundfile as sf
 import numpy as np
 from backend import loudness
 
 
-
 def load_audio_file(file_path):
-    # this function should load an wav audio file  with librosa and remain the same sample rate as the original file
+    """
+    loads an audio file
+    :param file_path: path to audio file
+    :return: tuple of audio and sample rate
+    """
     audio, sr = sf.read(file_path)
     return audio, sr
 
 
 def find_chorus(audio, sr, window_length):
+    """
+    finds the chorus of an audio file by finding the part with the highest integrated loudness
+    :param audio: audio to find the chorus in
+    :param sr: sample rate of audio
+    :param window_length: is number of samples for the size of the window
+    :return: audio cropped to the chorus
+    """
     loudest_i = 0
     loudest = -100000
     for i in range(0, audio.shape[0], sr):
@@ -27,47 +34,50 @@ def find_chorus(audio, sr, window_length):
     return audio[loudest_i:loudest_i + window_length]
 
 
-def interaural_level_difference(audio):
-    # function to calculate the interaural level difference of an audio signal
-    # the audio signal is a numpy array
-    # return the interaural level difference
-    left = audio[:, 0]
-    right = audio[:, 1]
-    return np.mean(np.abs(left - right))
-
-
 def crest_factor(audio):
-    # function to calculate the crest factor of an audio signal
-    # the audio signal is a numpy array
-    # the sample rate is an integer
-    # return the crest factor
-    max = np.max(audio)
-    return max / rms(audio)
+    """
+    calculates the crest factor of an audio signal
+    :param audio: audio to operate on
+    :return: crest factor of audio
+    """
+    max_signal = np.max(audio)
+    return max_signal / rms(audio)
 
 
 def rms(audio):
-    # function to calculate the root mean square of an audio signal
-    # the audio signal is a numpy array
-    # the sample rate is an integer
-    # return the root mean square
+    """
+    calculates the rms of an audio signal
+    :param audio: audio to operate on
+    :return: rms of audio
+    """
     return np.sqrt(np.mean(np.square(audio)))
 
 
 def preprocess_audio(audio, sr, duration=None):
-    # function to preprocess the audio
-    # this function should be called before the audio is passed to the optimizer
-    # this function should return the preprocessed audi and the sample rate of the audio
+    """
+    preprocesses an audio file by converting it to mono and finding the chorus
+    if duration is None the whole audio is used and no chorus is selected
+    :param audio: audio to operate on
+    :param sr: sample rate of audio
+    :param duration: length of the chorus in seconds
+    :return: tuple of mono audio and stereo audio
+    """
     if duration is not None:
-        max = find_chorus(audio, sr, duration * sr)
+        stereo = find_chorus(audio, sr, duration * sr)
     else:
-        max = audio
-    #reshaped = max.reshape(2, -1)
-    mono = np.sum(max, axis=1)
-    return mono, max
+        stereo = audio
+    mono = np.sum(stereo, axis=1)
+    return mono, stereo
 
 
 def numpy_to_wav(audio, sr, file_path):
-    # function to save a numpy array as a wav file with soundfile
+    """
+    saves an audio file as a wav file
+    :param audio: audio to operate on
+    :param sr: sample rate of audio
+    :param file_path: path to save the audio file to
+    :return: None
+    """
     sf.write(file_path, audio, sr)
 
 
