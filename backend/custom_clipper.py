@@ -16,15 +16,17 @@ class CustomClipper():
 
     def process(self, audio, sr):
         fade_in_samples = int(self.fade_in_duration * sr)
-        zero_crossings = np.nonzero(np.diff(np.sign(audio[:, 0])) + np.diff(np.sign(audio[:, 1])))[0]
-        first_zero_crossing = zero_crossings[0]
-        fade_in_window = np.linspace(0, 1, min(fade_in_samples, audio.shape[0] - first_zero_crossing), endpoint=False)
+        # Create an exponential fade-in window
+        fade_in_window = np.exp(np.linspace(-5, 0, fade_in_samples))
+
+        # append 0.1 seconds of silence in the beginning of the audio:
+        audio = np.concatenate((np.zeros((fade_in_samples, audio.shape[1])), audio), axis=0)
 
         for channel in range(audio.shape[1]):
-            audio[:fade_in_samples, channel] *= fade_in_window
             max_value = np.max(np.abs(audio))
             audio = audio / max_value
             audio = audio * 10 ** (self.gain / 20)
+            audio[fade_in_samples:2*fade_in_samples, channel] *= fade_in_window
             audio[:, channel] = np.clip(audio[:, channel], -self.threshold, self.threshold)
         return audio
 
