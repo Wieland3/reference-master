@@ -2,18 +2,12 @@ from scipy.signal import butter, sosfilt
 
 
 class CustomFilter:
-    def __init__(self, lowcut, highcut, sr, gain):
-        self.lowcut = lowcut
-        self.highcut = highcut
-        self.sr = sr
+    def __init__(self, lowcut, highcut, sr, gain=0):
+        self.gain = 10 ** (gain / 20)
+        self.filter = butter(2, [lowcut, highcut], 'bandpass', fs=sr, output='sos')
+
+    def set_gain(self, gain):
         self.gain = gain
-        self.filter = butter(2, [self.lowcut, self.highcut], 'bandpass', fs=self.sr, output='sos')
 
-    def set_params(self, values):
-        self.lowcut = values[0]
-        self.highcut = values[1]
-        self.gain = values[2]
-        self.filter = butter(2, [self.lowcut, self.highcut], 'bandpass', fs=self.sr, output='sos')
-
-    def filter_audio(self, audio, gain=0):
-        return sosfilt(self.filter, audio) * 10 ** (self.gain / 20)
+    def filter_audio(self, audio):
+        return sosfilt(self.filter, audio) * self.gain

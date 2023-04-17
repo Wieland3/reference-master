@@ -6,6 +6,7 @@ from backend import spectrum
 from backend import nova_eq
 from backend import custom_clipper
 from backend import mjuc
+from backend import audio_features
 import numpy as np
 
 
@@ -28,8 +29,8 @@ def master(audiofile):
     ref_max_mono, _ = audio_utils.preprocess_audio(ref_max_loudness_adjusted_stereo, sr_ref, None)
 
     # Calculate Crest Factor
-    crest_ref = audio_utils.crest_factor(ref_max_mono)
-    crest_raw = audio_utils.crest_factor(raw_max_mono)
+    crest_ref = audio_features.crest_factor(ref_max_mono)
+    crest_raw = audio_features.crest_factor(raw_max_mono)
 
     # Reference Spectrum Calculation
     power_ref = spectrum.create_spectrum(ref_max_mono, sr_ref)

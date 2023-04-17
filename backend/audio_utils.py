@@ -34,25 +34,6 @@ def find_chorus(audio, sr, window_length):
     return audio[loudest_i:loudest_i + window_length]
 
 
-def crest_factor(audio):
-    """
-    calculates the crest factor of an audio signal
-    :param audio: audio to operate on
-    :return: crest factor of audio
-    """
-    max_signal = np.max(audio)
-    return max_signal / rms(audio)
-
-
-def rms(audio):
-    """
-    calculates the rms of an audio signal
-    :param audio: audio to operate on
-    :return: rms of audio
-    """
-    return np.sqrt(np.mean(np.square(audio)))
-
-
 def preprocess_audio(audio, sr, duration=None):
     """
     preprocesses an audio file by converting it to mono and finding the chorus

@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import nova_eq
 import mjuc
 import custom_clipper
+import audio_features
 
 if __name__ == '__main__':
 
@@ -35,11 +36,11 @@ if __name__ == '__main__':
     print("ref loudness", ref_loudness)
     ref_loudness_adjusted = loudness.equal_loudness(ref_max, sr_ref, raw_loudness)
     print("loudness after adjust", loudness.get_loudness(ref_loudness_adjusted, sr_ref))
-    crest_ref = audio_utils.crest_factor(ref_mono)
+    crest_ref = audio_features.crest_factor(ref_mono)
     ref_mono, _ = audio_utils.preprocess_audio(ref_loudness_adjusted, sr_ref, None)
 
 
-    crest_raw = audio_utils.crest_factor(raw_mono)
+    crest_raw = audio_features.crest_factor(raw_mono)
 
     print("crest raw", crest_raw)
     print("crest ref", crest_ref)
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     #clipper.show_editor()
     final_loudness = loudness.get_loudness(processed, sr_raw)
     print("final loudness", final_loudness)
-    print("final crest", audio_utils.crest_factor(processed))
+    print("final crest", audio_features.crest_factor(processed))
 
     # clipper on raw max
     #raw_max = clipper.process(raw_max)
