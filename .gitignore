@@ -156,3 +156,5 @@ cython_debug/
 /tracks
 /uploads
 /mastered
+/mastered_embeddings
+/frontend/static
