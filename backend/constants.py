@@ -1,12 +1,11 @@
 # In this file constanst for the projects are defined
 
 #Paths
-PATH_TO_SLICK_EQ = '../plugins/tdr_eq.vst3'
 PATH_TO_NOVA_PLUGIN = '../plugins/TDR Nova.vst3'
-PATH_TO_CLIPPER = '../plugins/BSAClipper.vst3'
 PATH_TO_MJUC = '../plugins/MJUCjr.vst3'
 
 PATH_TO_WEBAPP_UPLOADS = '../frontend/uploads'
+PATH_TO_MASTERED_EMBEDDINGS = '../mastered_embeddings'
 
 # Duration for audio used for mastering
 DURATION = 10

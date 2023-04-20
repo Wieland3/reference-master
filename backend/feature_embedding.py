@@ -33,9 +33,10 @@ class FeatureEmbedding:
         return np.concatenate((melody, chroma, spectral_centroid_mean, spectral_centroid_std,
                                spectral_centroid_max, spectral_centroid_min, dynamic_range, tempo))
 
-
+'''
 audio, sr = audio_utils.load_audio_file("../tracks/raw_tracks/1.wav")
 audio, _ = audio_utils.preprocess_audio(audio, sr, 10)
 feature_embedding = FeatureEmbedding(audio, sr)
 print(feature_embedding.feature_vector.shape)
 print(feature_embedding.feature_vector)
+'''

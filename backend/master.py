@@ -1,4 +1,6 @@
 import os
+import numpy as np
+from backend import index_embeddings
 from backend import audio_utils
 from backend import constants
 from backend import loudness
@@ -7,7 +9,6 @@ from backend import nova_eq
 from backend import custom_clipper
 from backend import mjuc
 from backend import audio_features
-import numpy as np
 
 
 def master(audiofile):
@@ -17,9 +18,15 @@ def master(audiofile):
     raw, sr_raw = audio_utils.load_audio_file("../uploads/" + audiofile)
     raw_max_mono, raw_max_stereo = audio_utils.preprocess_audio(raw, sr_raw, duration)
 
-    # Load reference track
-    ref, sr_ref = audio_utils.load_audio_file('../tracks/reference_tracks/01 - Nightmare [Explicit].mp3')
+    # Find the closest reference track
+    embeddings = index_embeddings.IndexEmbeddings(38)
+    closest_track = embeddings.find_closest(raw_max_mono,sr_raw ,1)
+    print(closest_track)
+
+    # Load closest reference track
+    ref, sr_ref = audio_utils.load_audio_file(closest_track[0])
     ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, duration)
+
 
     # Loudness Calculation
     raw_loudness = loudness.get_loudness(raw_max_stereo, sr_raw)
