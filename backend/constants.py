@@ -11,7 +11,7 @@ PATH_TO_MASTERED_EMBEDDINGS = '../mastered_embeddings'
 DURATION = 10
 
 # Equalizer
-NUM_ITERATIONS = 1 # Num Iterations used for eq optimization
+NUM_ITERATIONS = 30 # Num Iterations used for eq optimization
 HP_FREQ = 20 # High Pass Filter Frequency
 LOOKBACK = 10 # Smoothing for Song Distance
 

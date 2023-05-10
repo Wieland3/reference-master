@@ -18,48 +18,37 @@
     <meta name="author" content="Master Your Song Online">
 
     <style>
-        .rounded {
-            border-radius: 16px;
-        }
-
-        .purple {
-            background-color: #501537;
-        }
 
         .white {
             color: #E7ECEF;
         }
 
-        .blue {
-            color: #28536B;
+    .progress-container {
+            width: 25%;
+            margin: 0 auto;
         }
 
-        .gray {
-            color: #6B7F82;
-        }
-
-        .magenta {
-            color: #922D50;
-        }
-
-        .upload-button {
-            background-color: #501537;
-            color: #E7ECEF;
-            border-radius: 16px;
+    .image{
+            background-image: url('../static/3.jpg');
+            background-size: cover;
+            background-position: center center;
         }
 
     </style>
 </head>
 <body>
-<section class="hero purple is-fullheight">
-    <div class="hero-body">
+<section class="hero is-fullheight">
+    <div class="hero-body image">
         <div class="container has-text-centered">
-            <h1 class="title is-1 white">
-                Your Song is Being Mastered!
+            <h1 class="title is-1 white" id="headline">
+                Your Song is Being Mastered
             </h1>
-            <h2 class="subtitle is-5 white">
+            <h2 class="subtitle is-5 white" id="subline">
                 This will take around 2 minutes. If the mastering is ready your file will be downloaded.
             </h2>
+            <div class="progress-container">
+                <progress class="progress is-small" max="100" id="progress">100%</progress>
+            </div>
             <div class="container">
                 <div class="" id="audio-holder-original"></div>
                 <div class="" id="audio-holder-mastered"></div>
@@ -93,6 +82,15 @@
                         // create new audio element
                         const audioHolderMastered = document.querySelector("#audio-holder-mastered")
                         const audio = addAudioElement(downloadURL, audioHolderMastered)
+
+                        const progress = document.querySelector("#progress")
+                        progress.remove()
+
+                        const headline = document.querySelector("#headline")
+                        headline.innerText = "Enjoy your Mastering!"
+
+                        const subline = document.querySelector("#subline")
+                        subline.innerText = "Feedback is highly appreciated!"
 
                     }
                 });

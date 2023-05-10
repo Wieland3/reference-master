@@ -7,10 +7,17 @@ import uuid
 import sys
 sys.path.append('../')
 from backend import master
+from backend import index_embeddings
 
 executor = ThreadPoolExecutor(1)
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = webapp_constants.UPLOAD_FOLDER
+
+'''
+embeddings = index_embeddings.IndexEmbeddings(38)
+embeddings.create_index()
+
+'''
 
 @app.route('/')
 def home():

@@ -27,7 +27,6 @@ def master(audiofile):
     ref, sr_ref = audio_utils.load_audio_file(closest_track[0])
     ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, duration)
 
-
     # Loudness Calculation
     raw_loudness = loudness.get_loudness(raw_max_stereo, sr_raw)
     ref_loudness = loudness.get_loudness(ref_max_stereo, sr_ref)
