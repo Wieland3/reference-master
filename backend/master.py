@@ -5,10 +5,9 @@ from backend import audio_utils
 from backend import constants
 from backend import loudness
 from backend import spectrum
-from backend import nova_eq
 from backend import custom_clipper
-from backend import mjuc
 from backend import audio_features
+from backend import custom_eq
 
 
 def master(audiofile):
@@ -41,21 +40,16 @@ def master(audiofile):
     # Reference Spectrum Calculation
     power_ref = spectrum.create_spectrum(ref_max_mono, sr_ref)
 
-    # MJUC
-    comp = mjuc.MJUC(constants.PATH_TO_MJUC)
-    comp.find_set_settings(raw_max_stereo, sr_raw)
-    raw_max_stereo = comp.process(raw_max_stereo, sr_raw)
-    raw_max_mono, _ = audio_utils.preprocess_audio(raw_max_stereo, sr_raw, None)
-    raw = comp.process(raw, sr_raw) # Apply Compressor to entire track
+    # Custom Eq
+    low_bounds = [(30, 100), (0.1, 6), (-12, 12)]
+    low_mid_bounds = [(100, 500), (0.1, 6), (-12, 12)]
+    mid_bounds = [(500, 1000), (0.1, 6), (-12, 12)]
+    high_mid_bounds = [(1000, 7500), (0.1, 6), (-12, 12)]
+    high_bounds = [(7500, 20000), (0.1, 6), (-12, 12)]
 
-    # Nova Eq
-    low_bounds = [(-17,17), (0.1,6), (30,100)]
-    low_mid_bounds = [(-17,17), (0.1,6), (100, 1000)]
-    high_mid_bounds = [(-17,17), (0.1,6), (1000, 7500)]
-    high_bounds = [(-17,17), (0.1,6), (7500, 20000)]
-    bounds = low_bounds + low_mid_bounds + high_mid_bounds + high_bounds
+    bounds = low_bounds + low_mid_bounds + mid_bounds + high_mid_bounds + high_bounds
 
-    eq = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN, "High S")
+    eq = custom_eq.CustomEq()
 
     eq.find_set_settings(bounds, raw_max_mono, sr_raw, power_ref, mode='direct')
     raw_max_stereo = eq.process(raw_max_stereo, sr_raw)

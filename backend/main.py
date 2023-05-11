@@ -8,6 +8,7 @@ import nova_eq
 import mjuc
 import custom_clipper
 import audio_features
+import custom_eq
 
 if __name__ == '__main__':
 
@@ -56,6 +57,7 @@ if __name__ == '__main__':
     #raw_max = slick.process(raw_max, sr_raw)
     #raw_mono = audio_utils.preprocess_audio(raw_max, sr_raw, None)[0]
 
+    '''
     # MJUC
     mjuc = mjuc.MJUC(constants.PATH_TO_MJUC)
     mjuc.find_set_settings(raw_max, sr_raw)
@@ -65,7 +67,8 @@ if __name__ == '__main__':
     print("loudness after", loudness_after)
     mjuc.show_editor()
     raw = mjuc.process(raw, sr_raw)
-
+    '''
+    '''
     # Nova Eq
     low_bounds = [(-17,17),(0.1,6),(30,100)]
     low_mid_bounds = [(-17,17),(0.1,6),(100, 1000)]
@@ -84,20 +87,33 @@ if __name__ == '__main__':
     print("distance after", distance_after)
     eq.show_editor()
     raw = eq.process(raw, sr_raw)
-
-    '''
-    eq2 = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN, "Bell")
-    params2 = eq2.find_set_settings(bounds, processed_mono, sr_raw, power_ref)
-    processed = eq2.process(processed, sr_raw)
-    eq2.show_editor()
-    raw = eq2.process(raw, sr_raw)
     '''
 
+    # customeq
+    low_bounds = [(30,100),(0.1,6),(-16,16)]
+    low_mid_bounds = [(100, 500),(0.1,6),(-16,16)]
+    mid_bounds = [(500, 1000), (0.1, 6), (-16,16)]
+    high_mid_bounds = [(1000, 7500),(0.1,6),(-16,16)]
+    high_bounds = [(7500, 20000),(0.1,6),(-16,16)]
+    bounds = low_bounds
+    eq = custom_eq.CustomEq()
+
+    params = eq.find_set_settings(bounds, raw_mono, sr_raw, power_ref, mode='direct')
+    print("params", params)
+    processed = eq.process(raw_max, sr_raw)
+    processed_mono = audio_utils.preprocess_audio(processed, sr_raw, None)[0]
+    distance_after = audio_distance.song_distance(processed_mono, sr_raw, power_ref)
+
+    print("distance before", init_dist)
+    print("distance after", distance_after)
+    raw = eq.process(raw, sr_raw)
+
+    '''
     # Clipper
     clipper = custom_clipper.CustomClipper()
     setting = clipper.find_set_settings(processed, sr_raw, mode='loudness', ref_loudness=ref_loudness).round(1)
     print("clipper setting", setting)
-    processed = clipper.process(processed)
+    processed = clipper.process(processed, sr_raw)
     #clipper.show_editor()
     final_loudness = loudness.get_loudness(processed, sr_raw)
     print("final loudness", final_loudness)
@@ -105,12 +121,13 @@ if __name__ == '__main__':
 
     # clipper on raw max
     #raw_max = clipper.process(raw_max)
-    raw = clipper.process(raw)
+    raw = clipper.process(raw, sr_raw)
     # Save audio
     audio_utils.numpy_to_wav(processed, sr_raw, '../tracks/edited/processed.wav')
     audio_utils.numpy_to_wav(ref_max, sr_ref, '../tracks/edited/reference.wav')
     audio_utils.numpy_to_wav(raw_max, sr_raw, '../tracks/edited/raw.wav')
     audio_utils.numpy_to_wav(raw, sr_raw, '../tracks/edited/full.wav')
+    '''
 
     # Load back audio
     raw, sr = audio_utils.load_audio_file('../tracks/edited/raw.wav')

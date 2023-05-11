@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../')
 import numpy as np
-from scipy.optimize import dual_annealing, differential_evolution, direct
+from scipy.optimize import dual_annealing, direct
 from backend import audio_distance
 
 
