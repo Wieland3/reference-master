@@ -1,13 +1,15 @@
 import numpy as np
 from backend import loudness
+from backend import plugin
 
 
-class CustomClipper:
+class CustomClipper(plugin.Plugin):
 
     def __init__(self):
         """
         This class is a custom clipper that is used to clip the audio to a certain loudness
         """
+        super().__init__()
         self.threshold = 10 ** (-1.2 / 20)
         self.gain = 0
         self.fade_in_duration = 0.1

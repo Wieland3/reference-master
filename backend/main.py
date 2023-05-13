@@ -4,8 +4,6 @@ import loudness
 import audio_distance
 import spectrum
 import matplotlib.pyplot as plt
-import nova_eq
-import mjuc
 import custom_clipper
 import audio_features
 import custom_eq
