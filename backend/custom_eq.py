@@ -24,7 +24,7 @@ class CustomEq:
         self.high_mid_gain = 0
         self.high_center_freq = 7500
         self.high_Q = 1
-        self.high_gain = 0
+        self.high_gain = 10
 
     def set_params(self, values):
         self.low_center_freq = values[0]
@@ -111,3 +111,4 @@ plt.plot(freq, spec)
 plt.xscale('log')
 plt.show()
 '''
+

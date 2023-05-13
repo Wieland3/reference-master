@@ -17,6 +17,9 @@ def master(audiofile):
     raw, sr_raw = audio_utils.load_audio_file("../uploads/" + audiofile)
     raw_max_mono, raw_max_stereo = audio_utils.preprocess_audio(raw, sr_raw, duration)
 
+    audiofirst = "FIRT" + audiofile
+    audio_utils.numpy_to_wav(raw_max_stereo, sr_raw, os.path.join("../tracks/edited", audiofirst))
+
     # Find the closest reference track
     embeddings = index_embeddings.IndexEmbeddings(38)
     closest_track = embeddings.find_closest(raw_max_mono,sr_raw ,1)
@@ -54,7 +57,8 @@ def master(audiofile):
     eq.find_set_settings(bounds, raw_max_mono, sr_raw, power_ref, mode='direct')
     raw_max_stereo = eq.process(raw_max_stereo, sr_raw)
     raw_max_mono, _ = audio_utils.preprocess_audio(raw_max_stereo, sr_raw, None)
-
+    audiosecond = "SECOND" + audiofile
+    audio_utils.numpy_to_wav(raw_max_stereo, sr_raw, os.path.join("../tracks/edited", audiosecond))
     raw = eq.process(raw, sr_raw)  # Apply Eq to entire track
 
     print("max before clip", np.max(raw))
@@ -62,6 +66,8 @@ def master(audiofile):
     # Clipper
     clipper = custom_clipper.CustomClipper()
     clipper.find_set_settings(raw_max_stereo, sr_raw, mode='loudness', ref_loudness=-7)
+    audiothird = "THIRD" + audiofile
+    audio_utils.numpy_to_wav(raw_max_stereo, sr_raw, os.path.join("../tracks/edited", audiothird))
 
     raw = clipper.process(raw, sr_raw)  # Apply Clipper to entire track
 
@@ -69,4 +75,5 @@ def master(audiofile):
     print(np.min(raw))
 
     # Save audio
+    audio_utils.numpy_to_wav(raw_max_stereo, sr_raw, os.path.join("../tracks/edited", audiofile))
     audio_utils.numpy_to_wav(raw, sr_raw, os.path.join("../mastered", audiofile))

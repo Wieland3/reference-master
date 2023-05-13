@@ -31,7 +31,7 @@ def find_chorus(audio, sr, window_length):
         if current_loudness > loudest:
             loudest = current_loudness
             loudest_i = i
-    return audio[loudest_i:loudest_i + window_length]
+    return audio[loudest_i:loudest_i + window_length].copy()
 
 
 def preprocess_audio(audio, sr, duration=None):
