@@ -11,7 +11,6 @@ def song_distance(audio, sr_audio, power_ref):
     :return: distance between audio and reference
     """
     power_audio, power_freq = spectrum.create_spectrum(audio, sr_audio)
-    power_ref, ref_freq = power_ref
     distance = mse(power_ref, power_audio)
     return distance
 

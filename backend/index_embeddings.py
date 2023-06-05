@@ -16,7 +16,7 @@ class IndexEmbeddings:
         creates a json file mapping the indexes to the file names in dir mastered_embeddings
         :return:
         """
-        t = AnnoyIndex(self.n, 'angular')
+        t = AnnoyIndex(self.n, 'euclidean')
         name_index_mapping = {}
 
         for i, filepath in enumerate(glob.iglob('../tracks/reference_tracks/*.mp3')):
@@ -39,7 +39,7 @@ class IndexEmbeddings:
         :param n_closest: number of closest reference tracks to find
         :return: list of names of closest reference tracks
         """
-        u = AnnoyIndex(self.n, 'angular')
+        u = AnnoyIndex(self.n, 'euclidean')
         u.load(constants.PATH_TO_MASTERED_EMBEDDINGS + '/embed.ann')
 
         new_vector = feature_embedding.FeatureEmbedding(audio, sr).feature_vector
@@ -50,3 +50,5 @@ class IndexEmbeddings:
             name_index_mapping = json.load(f)
 
         return [name_index_mapping[str(i)] for i in closest_indices]
+
+#IndexEmbeddings(38).create_index()

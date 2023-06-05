@@ -4,7 +4,6 @@ import loudness
 import audio_distance
 import spectrum
 import matplotlib.pyplot as plt
-import custom_clipper
 import audio_features
 import custom_eq
 
@@ -47,45 +46,6 @@ if __name__ == '__main__':
     power_ref = spectrum.create_spectrum(ref_mono, sr_ref)
     init_dist = audio_distance.song_distance(raw_mono, sr_raw, power_ref)
 
-    # Slick Eq
-    #bounds = [(-18,18),(30,500),(-18,18),(500,7500),(-18,18),(7500,20000)]
-    #slick = slick_eq.SlickEq(constants.PATH_TO_SLICK_EQ)
-    #slick.find_set_settings(bounds, raw_mono, sr_raw, power_ref)
-    #slick.show_editor()
-    #raw_max = slick.process(raw_max, sr_raw)
-    #raw_mono = audio_utils.preprocess_audio(raw_max, sr_raw, None)[0]
-
-    '''
-    # MJUC
-    mjuc = mjuc.MJUC(constants.PATH_TO_MJUC)
-    mjuc.find_set_settings(raw_max, sr_raw)
-    processed = mjuc.process(raw_max, sr_raw)
-    raw_mono = audio_utils.preprocess_audio(processed, sr_raw, None)[0]
-    loudness_after = loudness.get_loudness(processed, sr_raw)
-    print("loudness after", loudness_after)
-    mjuc.show_editor()
-    raw = mjuc.process(raw, sr_raw)
-    '''
-    '''
-    # Nova Eq
-    low_bounds = [(-17,17),(0.1,6),(30,100)]
-    low_mid_bounds = [(-17,17),(0.1,6),(100, 1000)]
-    high_mid_bounds = [(-17,17),(0.1,6),(1000, 7500)]
-    high_bounds = [(-17,17),(0.1,6),(7500, 20000)]
-    bounds = low_bounds + low_mid_bounds + high_mid_bounds + high_bounds
-
-    eq = nova_eq.NovaEq(constants.PATH_TO_NOVA_PLUGIN, "High S")
-
-    params = eq.find_set_settings(bounds, raw_mono, sr_raw, power_ref, mode='direct')
-    processed = eq.process(processed, sr_raw)
-    processed_mono = audio_utils.preprocess_audio(processed, sr_raw, None)[0]
-    distance_after = audio_distance.song_distance(processed_mono, sr_raw, power_ref)
-
-    print("distance before", init_dist)
-    print("distance after", distance_after)
-    eq.show_editor()
-    raw = eq.process(raw, sr_raw)
-    '''
 
     # customeq
     low_bounds = [(30,100),(0.1,6),(-16,16)]
