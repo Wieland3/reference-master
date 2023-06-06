@@ -1,13 +1,13 @@
-import os
-import numpy as np
-import matplotlib.pyplot as plt
 from backend import index_embeddings
 from backend import audio_utils
 from backend import constants
 from backend import loudness
 from backend import spectrum
 from backend import custom_clipper
-from backend import custom_eq
+from backend import equalizer
+import os
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 def master(audiofile):
@@ -37,27 +37,25 @@ def master(audiofile):
     # Reference Spectrum Calculation
     power_ref, freq = spectrum.create_spectrum(ref_max_mono, sr_ref)
 
-    # Custom Eq
-    low_bounds = [(30, 500), (1, 10), (-16, 16)]
-    #low_mid_bounds = [(100, 250), (0.1, 10), (-12, 12)]
-    mid_bounds = [(500, 7500), (1, 10), (-16, 16)]
-    #high_mid_bounds = [(500, 1000), (0.1, 10), (-12, 12)]
-    high_bounds = [(7500, 20000), (1, 10), (-16, 16)]
+    #center_freqs = [(30, 60), (60, 100), (100, 200), (200, 400), (400, 800), (800, 1600), (1600, 3200), (3200, 6400), (6400, 12800), (12800, 18000)]
+    band_widths = [(10, 4000) for _ in range(30)]
+    gain = [(-12, 12) for _ in range(30)]
+    bounds = band_widths + gain
 
-    bounds = low_bounds + mid_bounds + high_bounds
-
-    eq = custom_eq.CustomEq()
+    print("Bounds", bounds)
+    print("LEN", len(bounds))
+    eq = equalizer.Equalizer(sr_raw)
 
     eq.find_set_settings(bounds, raw_max_mono, sr_raw, power_ref, mode='direct')
-    raw_max_stereo = eq.process(raw_max_stereo, sr_raw)
+    raw_max_stereo = eq.process(raw_max_stereo)
     raw_max_mono, _ = audio_utils.preprocess_audio(raw_max_stereo, sr_raw, None)
-    raw = eq.process(raw, sr_raw)  # Apply Eq to entire track
+    raw = eq.process(raw)  # Apply Eq to entire track
 
     print("max before clip", np.max(raw))
     print("min before clip", np.min(raw))
     # Clipper
     clipper = custom_clipper.CustomClipper()
-    clipper.find_set_settings(raw_max_stereo, sr_raw, mode='loudness', ref_loudness=-7)
+    clipper.find_set_settings(raw_max_stereo, sr_raw, mode='loudness', ref_loudness=ref_loudness)
 
     raw = clipper.process(raw, sr_raw)  # Apply Clipper to entire track
 
@@ -72,9 +70,19 @@ def master(audiofile):
     # Load Back audio and plot spectrums
     ref, sr_ref = audio_utils.load_audio_file(closest_track[0])
     ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, duration)
+
+    #loudness of ref
+    ref_loudness = loudness.get_loudness(ref_max_stereo, sr_ref)
+    print("ref loudness", ref_loudness)
+    # loudness of mastered
+
     power_ref, freq = spectrum.create_spectrum(ref_max_mono, sr_ref)
     raw, sr_raw = audio_utils.load_audio_file("../mastered/" + audiofile)
     raw_max_mono, raw_max_stereo = audio_utils.preprocess_audio(raw, sr_raw, duration)
+
+    raw_loudness = loudness.get_loudness(raw_max_stereo, sr_raw)
+    print("raw loudness", raw_loudness)
+
     spec, freq = spectrum.create_spectrum(raw_max_mono, sr_raw)
     plt.plot(freq, spec, label="mastered")
     plt.plot(freq, power_ref, label="reference")
@@ -83,5 +91,5 @@ def master(audiofile):
     plt.show()
 
 
-master("4.wav")
+master("1.wav")
 

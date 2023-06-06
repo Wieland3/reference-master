@@ -8,6 +8,6 @@ class Plugin:
     def set_params(self, values):
         pass
 
-    def process(self, audio, sr):
+    def process(self, audio):
         pass
 
