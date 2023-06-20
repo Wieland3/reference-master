@@ -37,10 +37,10 @@ def master(audiofile):
     # Reference Spectrum Calculation
     power_ref, freq = spectrum.create_spectrum(ref_max_mono, sr_ref)
 
-    #center_freqs = [(30, 60), (60, 100), (100, 200), (200, 400), (400, 800), (800, 1600), (1600, 3200), (3200, 6400), (6400, 12800), (12800, 18000)]
-    band_widths = [(10, 4000) for _ in range(30)]
-    gain = [(-12, 12) for _ in range(30)]
-    bounds = band_widths + gain
+    center_freqs = [(30.0, 100.0), (100.0, 500.0), (500.0, 7500.0), (7500.0, 16000.0)]
+    Q_values = [(0.1, 6.0) for _ in range(4)]
+    gain = [(-12.0, 12.0) for _ in range(4)]
+    bounds = center_freqs + Q_values + gain
 
     print("Bounds", bounds)
     print("LEN", len(bounds))
@@ -91,5 +91,5 @@ def master(audiofile):
     plt.show()
 
 
-master("1.wav")
+master("12.wav")
 

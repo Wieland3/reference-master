@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 
-center_freqs = [25, 31, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400, 500, 630, 800, 1000, 1250, 1600,
-                2000, 2500, 3150, 4000, 5000, 6300, 8000, 10000, 12500, 16000, 20000]
+center_freqs = [100, 500, 2000, 12000]
 
-band_widths = [10 for _ in range(len(center_freqs))]
+Q_values = [1 for _ in range(len(center_freqs))]
+band_widths = [center_freqs[i] / Q_values[i] for i in range(len(center_freqs))]
 
 
 class Equalizer(plugin.Plugin):
@@ -23,10 +23,15 @@ class Equalizer(plugin.Plugin):
         super().__init__()
         self.sr = sr  # sample rate
         self.center_freqs = center_freqs  # center frequencies of the bands
-        self.band_widths = band_widths  # bandwidths of the bands
+        self.Q_values = Q_values  # Q values of the bands
+        self.band_widths = [self.center_freqs[i] / self.Q_values[i] for i in range(len(self.center_freqs))]
         self.gains = [0 for _ in range(len(center_freqs))]  # gains of the bands
         self.num_bands = len(center_freqs)  # number of bands
         self.filters = []  # list of biquad filters
+
+        # add high pass filter
+
+        self.filters.append(biquad.Biquad(self.sr, 'HighPass', 15, 10, 0))
 
         for i in range(self.num_bands):
             self.filters.append(biquad.Biquad(self.sr, 'Peaking', self.center_freqs[i], self.band_widths[i], 0))
@@ -37,11 +42,14 @@ class Equalizer(plugin.Plugin):
         :param values: list of gains. Needs to have length equal to the number of bands
         :return: None
         """
-        #self.center_freqs = values[0:self.num_bands]
-        self.band_widths = values[0:self.num_bands]
-        self.gains = values[self.num_bands:2 * self.num_bands]
+        self.center_freqs = values[0:self.num_bands]
+        self.Q_values = values[self.num_bands:2 * self.num_bands]
+        self.band_widths = [self.center_freqs[i] / self.Q_values[i] for i in range(len(self.center_freqs))]
+        self.gains = values[2 * self.num_bands:3 * self.num_bands]
 
         self.filters = []  # empty list of filters
+
+        self.filters.append(biquad.Biquad(self.sr, 'HighPass', 15, 10, 0))
 
         for i in range(self.num_bands):
             self.filters.append(biquad.Biquad(self.sr, 'Peaking', self.center_freqs[i], self.band_widths[i], self.gains[i]))
