@@ -4,7 +4,7 @@ from backend import constants
 from backend import loudness
 from backend import spectrum
 from backend import custom_clipper
-from backend import equalizer
+from backend import custom_equalizer
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,19 +37,19 @@ def master(audiofile):
     # Reference Spectrum Calculation
     power_ref, freq = spectrum.create_spectrum(ref_max_mono, sr_ref)
 
-    center_freqs = [(30.0, 100.0), (100.0, 500.0), (500.0, 7500.0), (7500.0, 16000.0)]
-    Q_values = [(0.1, 6.0) for _ in range(4)]
-    gain = [(-12.0, 12.0) for _ in range(4)]
-    bounds = center_freqs + Q_values + gain
+    center_freqs = [(30.0, 150.0), (150.0, 500.0), (500.0, 1000.0), (1000.0, 7500.0), (7500.0, 16000.0)]
+    Q_values = [(0.1, 12.0) for _ in range(5)]
+    gain = [(-16.0, 16.0) for _ in range(5)]
+    bounds = gain + center_freqs + Q_values
 
     print("Bounds", bounds)
     print("LEN", len(bounds))
-    eq = equalizer.Equalizer(sr_raw)
+    eq = custom_equalizer.CustomEqualizer()
 
-    eq.find_set_settings(bounds, raw_max_mono, sr_raw, power_ref, mode='direct')
-    raw_max_stereo = eq.process(raw_max_stereo)
+    eq.find_set_settings(bounds, raw_max_mono, sr_raw, power_ref)
+    raw_max_stereo = eq.process(raw_max_stereo, sr_raw)  # Apply Eq to entire track
     raw_max_mono, _ = audio_utils.preprocess_audio(raw_max_stereo, sr_raw, None)
-    raw = eq.process(raw)  # Apply Eq to entire track
+    raw = eq.process(raw, sr_raw)  # Apply Eq to entire track
 
     print("max before clip", np.max(raw))
     print("min before clip", np.min(raw))
