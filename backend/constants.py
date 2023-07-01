@@ -1,14 +1,15 @@
 # In this file constanst for the projects are defined
 
-#Paths
-PATH_TO_NOVA_PLUGIN = '../plugins/TDR Nova.vst3'
-PATH_TO_MJUC = '../plugins/MJUCjr.vst3'
+# Database Settings
+LOUDNESS_NORM = -18.0 # Loudness normalization for reference tracks
 
 PATH_TO_WEBAPP_UPLOADS = '../frontend/uploads'
 PATH_TO_MASTERED_EMBEDDINGS = '../mastered_embeddings'
 
-# Duration for audio used for mastering
+# Duration of the chorus in seconds
 DURATION = 10
+# Target Loudness for Mastering
+LOUDNESS = -7.0
 
 # Equalizer
 NUM_ITERATIONS = 200 # Num Iterations used for eq optimization
