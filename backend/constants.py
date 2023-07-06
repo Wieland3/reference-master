@@ -12,7 +12,7 @@ DURATION = 10
 LOUDNESS = -7.0
 
 # Equalizer
-NUM_ITERATIONS = 200 # Num Iterations used for eq optimization
+NUM_ITERATIONS = 100 # Num Iterations used for eq optimization
 HP_FREQ = 20 # High Pass Filter Frequency
 LOOKBACK = 10 # Smoothing for Song Distance
 

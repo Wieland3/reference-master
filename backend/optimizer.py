@@ -15,8 +15,8 @@ def objective(params, plugin, raw, sr_raw, power_ref):
 
 def dual_annealing_optimization(plugin, bounds, raw, sr_raw, power_ref, maxiter):
     args = (plugin, raw, sr_raw, power_ref)
-    x0 = np.array([0.0, 1, 100, 0.0, 1, 1000, 0.0, 1, 5000, 0.0, 1, 7500])
-    return dual_annealing(func=objective, bounds=bounds, args=args, maxiter=maxiter, x0=x0)
+    #x0 = np.array([0.0, 1, 100, 0.0, 1, 1000, 0.0, 1, 5000, 0.0, 1, 7500])
+    return dual_annealing(func=objective, bounds=bounds, args=args, maxiter=maxiter)
 
 
 def direct_optimization(plugin, bounds, raw, sr_raw, power_ref, maxiter):
