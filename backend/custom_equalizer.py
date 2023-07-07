@@ -1,5 +1,4 @@
 import pedalboard
-import numpy as np
 import matplotlib.pyplot as plt
 from backend import plugin
 from backend import optimizer
@@ -12,43 +11,27 @@ from backend import loudness
 class CustomEqualizer(plugin.Plugin):
     def __init__(self):
         super().__init__()
-        self.board = pedalboard.Pedalboard([
-                        pedalboard.HighpassFilter(cutoff_frequency_hz=30),
-                        pedalboard.PeakFilter(cutoff_frequency_hz=100, gain_db=0, q=1),
-                        pedalboard.PeakFilter(cutoff_frequency_hz=500, gain_db=0, q=1),
-                        pedalboard.PeakFilter(cutoff_frequency_hz=1000, gain_db=0, q=1),
-                        pedalboard.PeakFilter(cutoff_frequency_hz=2000, gain_db=0, q=1),
-                        pedalboard.PeakFilter(cutoff_frequency_hz=4000, gain_db=0, q=1),
-                        pedalboard.PeakFilter(cutoff_frequency_hz=6000, gain_db=0, q=1),
-                        pedalboard.HighShelfFilter(cutoff_frequency_hz=7500, gain_db=0, q=1)])
+        self.filters = [pedalboard.HighpassFilter(cutoff_frequency_hz=30)]
+        self.filters += [pedalboard.PeakFilter(cutoff_frequency_hz=cutoff, gain_db=0, q=1) for cutoff in
+                       [100, 250, 500, 1000, 1000, 2000, 2000, 4000, 4000, 6000, 6000]]
+        self.filters.append(pedalboard.HighShelfFilter(cutoff_frequency_hz=7500, gain_db=0, q=1))
+        self.board = pedalboard.Pedalboard(self.filters)
+
+    def set_filter_params(self, filter_index, gain_db, cutoff_frequency_hz, q):
+        eq_filter = self.board[filter_index]
+        eq_filter.gain_db = gain_db
+        eq_filter.cutoff_frequency_hz = cutoff_frequency_hz
+        eq_filter.q = q
 
     def set_params(self, values):
-        self.board[1].gain_db = values[0]
-        self.board[2].gain_db = values[1]
-        self.board[3].gain_db = values[2]
-        self.board[4].gain_db = values[3]
-        self.board[5].gain_db = values[4]
-        self.board[6].gain_db = values[5]
-        self.board[7].gain_db = values[6]
-        self.board[1].cutoff_frequency_hz = values[7]
-        self.board[2].cutoff_frequency_hz = values[8]
-        self.board[3].cutoff_frequency_hz = values[9]
-        self.board[4].cutoff_frequency_hz = values[10]
-        self.board[5].cutoff_frequency_hz = values[11]
-        self.board[6].cutoff_frequency_hz = values[12]
-        self.board[7].cutoff_frequency_hz = values[13]
-        self.board[1].q = values[14]
-        self.board[2].q = values[15]
-        self.board[3].q = values[16]
-        self.board[4].q = values[17]
-        self.board[5].q = values[18]
-        self.board[6].q = values[19]
-        self.board[7].q = values[20]
+        num_filters = len(self.filters) - 1
+        gain_idx_offset = num_filters
+        q_idx_offset = num_filters * 2
+        for i in range(num_filters):
+            self.set_filter_params(i + 1, values[i], values[i + gain_idx_offset], values[i + q_idx_offset])
 
     def process(self, audio, sr):
         return self.board(audio, sr)
-
-        return processed_audio
 
     def find_set_settings(self, bounds, raw_mono, sr_raw, power_ref, maxiter=constants.NUM_ITERATIONS, verbose=True):
         """
