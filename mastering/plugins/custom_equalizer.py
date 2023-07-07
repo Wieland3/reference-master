@@ -1,11 +1,11 @@
 import pedalboard
 import matplotlib.pyplot as plt
-from backend import plugin
-from backend import optimizer
-from backend import constants
-from backend import audio_utils
-from backend import spectrum
-from backend import loudness
+from mastering.plugins import plugin
+from mastering import optimizer
+from mastering import constants
+from mastering import audio_utils
+from mastering import spectrum
+from mastering import loudness
 
 
 class CustomEqualizer(plugin.Plugin):
@@ -30,9 +30,6 @@ class CustomEqualizer(plugin.Plugin):
         for i in range(num_filters):
             self.set_filter_params(i + 1, values[i], values[i + gain_idx_offset], values[i + q_idx_offset])
 
-    def process(self, audio, sr):
-        return self.board(audio, sr)
-
     def find_set_settings(self, bounds, raw_mono, sr_raw, power_ref, maxiter=constants.NUM_ITERATIONS, verbose=True):
         """
         Finds the best settings for the Equalizer object
@@ -54,12 +51,12 @@ class CustomEqualizer(plugin.Plugin):
 
 if __name__ == "__main__":
 
-    audio, sr = audio_utils.load_audio_file("../tracks/raw_tracks/18.wav")
+    audio, sr = audio_utils.load_audio_file("../../tracks/raw_tracks/18.wav")
     audio_max_mono, audio_max_stereo = audio_utils.preprocess_audio(audio, sr, 10)
 
     audio_loudness = loudness.get_loudness(audio_max_mono, sr)
 
-    ref, sr_ref = audio_utils.load_audio_file("../tracks/reference_tracks/02 - Sound of Madness.mp3")
+    ref, sr_ref = audio_utils.load_audio_file("../../tracks/reference_tracks/02 - Sound of Madness.mp3")
     ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, 10)
 
     ref_max_mono = loudness.equal_loudness(ref_max_mono, sr_ref, audio_loudness)

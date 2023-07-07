@@ -1,9 +1,9 @@
 from annoy import AnnoyIndex
 import glob
 import json
-from backend import constants
-from backend import feature_embedding
-from backend import audio_utils
+from mastering import constants
+from mastering import feature_embedding
+from mastering import audio_utils
 
 
 class IndexEmbeddings:

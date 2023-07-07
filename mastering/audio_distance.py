@@ -1,5 +1,5 @@
 import numpy as np
-from backend import spectrum
+from mastering import spectrum
 
 
 def song_distance(audio, sr_audio, power_ref):

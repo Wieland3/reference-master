@@ -2,7 +2,7 @@ import sys
 sys.path.append('../')
 import librosa
 import numpy as np
-from backend import constants
+from mastering import constants
 
 
 def create_spectrum(audio, sr):

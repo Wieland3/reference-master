@@ -1,11 +1,8 @@
-from backend import index_embeddings
-from backend import audio_utils
-from backend import constants
-from backend import loudness
-from backend import spectrum
-from backend import custom_clipper
-from backend import custom_equalizer
-from backend import song_database
+from mastering import audio_utils
+from mastering import constants
+from mastering import loudness
+from mastering import spectrum
+from mastering.plugins import custom_equalizer, custom_clipper
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -63,7 +60,7 @@ def master(audiofile):
     # Clipper
     clipper = custom_clipper.CustomClipper()
     print("reference loudness", ref_loudness)
-    clipper.find_set_settings(raw_max_stereo, sr_raw, mode='loudness', ref_loudness=ref_loudness)
+    clipper.find_set_settings(raw_max_stereo, sr_raw, ref_loudness=ref_loudness)
 
     raw_max_stereo = clipper.process(raw_max_stereo, sr_raw)  # Apply Clipper to max track
     raw_max_mono, _ = audio_utils.preprocess_audio(raw_max_stereo, sr_raw, None)
@@ -121,5 +118,5 @@ def master(audiofile):
     plt.show()
 
 
-master("17.wav")
+master("1.wav")
 

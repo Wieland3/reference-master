@@ -1,7 +1,7 @@
 import librosa
 import numpy as np
-from backend import audio_features
-from backend import audio_utils
+from mastering import audio_features
+from mastering import audio_utils
 
 
 class FeatureEmbedding:
