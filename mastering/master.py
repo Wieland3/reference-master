@@ -1,6 +1,6 @@
-from mastering.utils import audio_utils, loudness, spectrum, audio_distance
+from mastering.utils import audio_utils, loudness, spectrum
 from mastering import constants, song_database
-from mastering.plugins import custom_equalizer, custom_clipper
+from mastering.plugins import custom_equalizer, custom_clipper, custom_compressor, custom_saturator
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -35,6 +35,14 @@ def master(audiofile):
     ref_max_loudness_adjusted_stereo = loudness.equal_loudness(ref_max_stereo, sr_ref, raw_loudness)
     ref_max_mono, _ = audio_utils.preprocess_audio(ref_max_loudness_adjusted_stereo, sr_ref, None)
 
+    # Apply Compressor
+    compressor = custom_compressor.CustomCompressor()
+    settings = compressor.find_set_settings(raw_max_mono, sr_raw)
+    print("compressor settings", settings)
+    raw_max_stereo = compressor.process(raw_max_stereo, sr_raw)
+    raw_max_mono, _ = audio_utils.preprocess_audio(raw_max_stereo, sr_raw, None)
+    raw = compressor.process(raw, sr_raw) # Apply compressor to the whole track
+
     # Reference Spectrum Calculation
     power_ref, freq = spectrum.create_spectrum(ref_max_mono, sr_ref)
 
@@ -49,6 +57,12 @@ def master(audiofile):
     raw_max_stereo = eq.process(raw_max_stereo, sr_raw)  # Apply Eq to entire track
     raw_max_mono, _ = audio_utils.preprocess_audio(raw_max_stereo, sr_raw, None)
     raw = eq.process(raw, sr_raw)  # Apply Eq to entire track
+
+    # Apply Saturator
+    saturator = custom_saturator.CustomSaturator()
+    raw_max_stereo = saturator.process(raw_max_stereo, sr_raw)
+    raw_max_mono, _ = audio_utils.preprocess_audio(raw_max_stereo, sr_raw, None)
+    raw = saturator.process(raw, sr_raw)  # Apply saturator to entire track
 
     print("max before clip", np.max(raw))
     print("min before clip", np.min(raw))
@@ -75,10 +89,6 @@ def master(audiofile):
     audio_utils.numpy_to_wav(raw_max_stereo, sr_raw, os.path.join("../tracks/edited", audiofile))
     audio_utils.numpy_to_wav(raw, sr_raw, os.path.join("../mastered", audiofile))
 
-    # Load Back reference
-    ref, sr_ref = audio_utils.load_audio_file("../tracks/reference_tracks/BreakTheFall.mp3")
-    ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, duration)
-
     # Loud raw track back
     raw, sr_raw = audio_utils.load_audio_file("../tracks/raw_tracks/" + audiofile)
     raw_max_mono, raw_max_stereo = audio_utils.preprocess_audio(raw, sr_raw, duration)
@@ -86,6 +96,10 @@ def master(audiofile):
     # Load back mastered track
     mastered, sr_mastered = audio_utils.load_audio_file("../mastered/" + audiofile)
     mastered_max_mono, mastered_max_stereo = audio_utils.preprocess_audio(mastered, sr_mastered, duration)
+
+    # Load back reference track
+    ref, sr_ref = db.audio[closest_track], db.sr[closest_track]
+    ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, None)
 
     #loudness of ref
     ref_loudness = loudness.get_loudness(ref_max_stereo, sr_ref)
@@ -113,5 +127,5 @@ def master(audiofile):
     plt.show()
 
 
-master("2.wav")
+master("raw_11.wav")
 
