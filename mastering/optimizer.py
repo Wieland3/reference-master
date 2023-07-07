@@ -1,5 +1,4 @@
-import sys
-sys.path.append('../')
+import numpy as np
 from scipy.optimize import dual_annealing, direct
 from mastering.utils import audio_distance
 
@@ -14,8 +13,12 @@ def objective(params, plugin, raw, sr_raw, power_ref):
 
 def dual_annealing_optimization(plugin, bounds, raw, sr_raw, power_ref, maxiter):
     args = (plugin, raw, sr_raw, power_ref)
-    #x0 = np.array([0.0, 1, 100, 0.0, 1, 1000, 0.0, 1, 5000, 0.0, 1, 7500])
-    return dual_annealing(func=objective, bounds=bounds, args=args, maxiter=maxiter)
+
+    center_freq_x0 = [60, 125, 300, 1500, 1700, 2500, 2700, 3500, 3700, 4200, 6000, 10000]
+    gain_x0 = [0 for _ in range(12)]
+    q_x0 = [1 for _ in range(12)]
+    x0 = np.array(gain_x0 + center_freq_x0 + q_x0)
+    return dual_annealing(func=objective, bounds=bounds, args=args, maxiter=maxiter, x0=x0, initial_temp=1000)
 
 
 def direct_optimization(plugin, bounds, raw, sr_raw, power_ref, maxiter):

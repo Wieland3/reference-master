@@ -9,10 +9,10 @@ PATH_TO_MASTERED_EMBEDDINGS = '../mastered_embeddings'
 # Duration of the chorus in seconds
 DURATION = 5
 # Target Loudness for Mastering
-LOUDNESS = -7.0
+TARGET_LOUDNESS = -7.0
 
 # Equalizer
-NUM_ITERATIONS = 1 # Num Iterations used for eq optimization
+NUM_ITERATIONS = 50 # Num Iterations used for eq optimization
 HP_FREQ = 20 # High Pass Filter Frequency
 LOOKBACK = 10 # Smoothing for Song Distance
 

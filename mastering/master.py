@@ -1,5 +1,5 @@
-from mastering.utils import audio_utils, loudness, spectrum
-from mastering import constants
+from mastering.utils import audio_utils, loudness, spectrum, audio_distance
+from mastering import constants, song_database
 from mastering.plugins import custom_equalizer, custom_clipper
 import os
 import numpy as np
@@ -18,19 +18,18 @@ def master(audiofile):
     raw_max_loudness_adjusted_stereo = loudness.equal_loudness(raw_max_stereo, sr_raw, constants.LOUDNESS_NORM)
     raw_max_loudness_adjusted_mono, _ = audio_utils.preprocess_audio(raw_max_loudness_adjusted_stereo, sr_raw, None)
 
-    # Find the closest reference track
-    #db = song_database.SpectrumDatabase()
-    #db.load_spectrum_database()
-    #closest_track = db.find_closest(raw_max_loudness_adjusted_mono, sr_raw)
+    # Find the closest reference track based on normalized audio
+    db = song_database.SpectrumDatabase()
+    db.load_spectrum_database()
+    closest_track = db.find_closest(raw_max_loudness_adjusted_mono, sr_raw)
 
-    # Load closest reference track
-    ref, sr_ref = audio_utils.load_audio_file("../tracks/reference_tracks/BreakTheFall.mp3")
-    ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, duration)
+    # Load closest unnormalized reference track
+    ref, sr_ref = db.audio[closest_track], db.sr[closest_track]
+    ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, None)
 
     # Loudness Calculation
     raw_loudness = loudness.get_loudness(raw_max_stereo, sr_raw)
     ref_loudness = loudness.get_loudness(ref_max_stereo, sr_ref)
-    print(ref_loudness)
 
     # Make sure the reference track is the same loudness as the raw track
     ref_max_loudness_adjusted_stereo = loudness.equal_loudness(ref_max_stereo, sr_ref, raw_loudness)
@@ -44,8 +43,6 @@ def master(audiofile):
     gain = [(-16.0, 16.0) for _ in range(12)]
     bounds = gain + center_freqs + Q_values
 
-    print("Bounds", bounds)
-    print("LEN", len(bounds))
     eq = custom_equalizer.CustomEqualizer()
 
     eq.find_set_settings(bounds, raw_max_mono, sr_raw, power_ref)
@@ -116,5 +113,5 @@ def master(audiofile):
     plt.show()
 
 
-master("1.wav")
+master("2.wav")
 

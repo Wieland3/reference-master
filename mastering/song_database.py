@@ -6,6 +6,7 @@ import glob
 
 class SpectrumDatabase:
     def __init__(self):
+        self.normalized_audio = None
         self.audio = None
         self.sr = None
         self.specs = None
@@ -16,6 +17,7 @@ class SpectrumDatabase:
         Creates a npz file of all the songs in the reference folder.
         :return:
         """
+        normalized_audio_db = []
         audio_db = []
         specs_db = []
         sr_db = []
@@ -23,18 +25,21 @@ class SpectrumDatabase:
         for i, filepath in enumerate(glob.iglob('../tracks/reference_tracks/*.mp3')):
             audio, sr = audio_utils.load_audio_file(filepath)
             _, audio_max_stereo = audio_utils.preprocess_audio(audio, sr, constants.DURATION)
+            audio_db.append(audio_max_stereo)
             audio_max_stereo = loudness.equal_loudness(audio_max_stereo, sr, loudness_norm)
             audio_max_mono, _ = audio_utils.preprocess_audio(audio_max_stereo, sr, None)
             spec, freq = spectrum.create_spectrum(audio_max_mono, sr)
-            audio_db.append(audio_max_stereo)
+            normalized_audio_db.append(audio_max_stereo)
             sr_db.append(sr)
             specs_db.append(spec)
             freqs.append(freq)
+        normalized_audio_db = np.array(normalized_audio_db)
         audio_db = np.array(audio_db)
         sr_db = np.array(sr_db)
         specs = np.array(specs_db)
         freqs = np.array(freqs)
-        np.savez('../spectrum_database/db.npz', specs=specs, freqs=freqs, audio=audio_db, sr=sr_db)
+        np.savez('../spectrum_database/db.npz', audio=audio_db, specs=specs, freqs=freqs, normalized_audio=normalized_audio_db, sr=sr_db)
+        self.normalized_audio = normalized_audio_db
         self.audio = audio_db
         self.sr = sr_db
         self.specs = specs
@@ -46,6 +51,7 @@ class SpectrumDatabase:
         :return:
         """
         db = np.load('../spectrum_database/db.npz')
+        self.normalized_audio = db['normalized_audio']
         self.audio = db['audio']
         self.sr = db['sr']
         self.specs = db['specs']
@@ -60,12 +66,14 @@ class SpectrumDatabase:
         """
         closest_index = None
         closest_dist = np.inf
+
         for i in range(self.specs.shape[0]):
             dist = audio_distance.song_distance(audio, sr, self.specs[i])
-            print(dist)
+
             if dist < closest_dist:
                 closest_dist = dist
                 closest_index = i
+
         return closest_index
 
 
