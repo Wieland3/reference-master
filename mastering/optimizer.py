@@ -1,8 +1,7 @@
 import sys
 sys.path.append('../')
-import numpy as np
 from scipy.optimize import dual_annealing, direct
-from mastering import audio_distance
+from mastering.utils import audio_distance
 
 
 def objective(params, plugin, raw, sr_raw, power_ref):

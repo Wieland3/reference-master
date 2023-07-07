@@ -1,5 +1,5 @@
 import sys
-sys.path.append('../')
+sys.path.append('../../')
 import librosa
 import numpy as np
 from mastering import constants

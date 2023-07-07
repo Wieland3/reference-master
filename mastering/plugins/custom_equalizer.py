@@ -3,9 +3,7 @@ import matplotlib.pyplot as plt
 from mastering.plugins import plugin
 from mastering import optimizer
 from mastering import constants
-from mastering import audio_utils
-from mastering import spectrum
-from mastering import loudness
+from mastering.utils import audio_utils, loudness, spectrum
 
 
 class CustomEqualizer(plugin.Plugin):

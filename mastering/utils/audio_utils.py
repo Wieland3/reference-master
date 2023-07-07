@@ -1,6 +1,6 @@
 import soundfile as sf
 import numpy as np
-from mastering import loudness
+from mastering.utils import loudness
 
 
 def load_audio_file(file_path):

@@ -3,11 +3,11 @@ import webapp_constants
 import os
 from concurrent.futures import ThreadPoolExecutor
 import uuid
+import time
 
 import sys
 sys.path.append('../')
-from backend import master
-from backend import index_embeddings
+from mastering import master
 
 executor = ThreadPoolExecutor(1)
 app = Flask(__name__)

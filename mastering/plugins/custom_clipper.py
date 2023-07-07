@@ -1,6 +1,6 @@
 import numpy as np
 import pedalboard
-from mastering import loudness
+from mastering.utils import loudness
 from mastering.plugins import plugin
 
 

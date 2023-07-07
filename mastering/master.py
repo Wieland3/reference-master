@@ -1,7 +1,5 @@
-from mastering import audio_utils
+from mastering.utils import audio_utils, loudness, spectrum
 from mastering import constants
-from mastering import loudness
-from mastering import spectrum
 from mastering.plugins import custom_equalizer, custom_clipper
 import os
 import numpy as np
