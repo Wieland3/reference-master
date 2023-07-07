@@ -151,10 +151,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-#Folders 
-/plugins
+#Folders
 /tracks
 /uploads
 /mastered
-/mastered_embeddings
+/spectrum_database
 /frontend/static
