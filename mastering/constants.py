@@ -3,7 +3,7 @@
 # Database Settings
 LOUDNESS_NORM = -18.0 # Loudness normalization for reference tracks
 
-PATH_TO_WEBAPP_UPLOADS = '../frontend/uploads'
+PATH_TO_WEBAPP_UPLOADS = '../webapp/uploads'
 PATH_TO_MASTERED_EMBEDDINGS = '../mastered_embeddings'
 
 # Duration of the chorus in seconds

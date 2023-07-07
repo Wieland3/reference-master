@@ -156,4 +156,4 @@ cython_debug/
 /uploads
 /mastered
 /spectrum_database
-/frontend/static
+/webapp/static
