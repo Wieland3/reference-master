@@ -7,8 +7,8 @@ from mastering.utils import loudness
 class CustomCompressor(plugin.Plugin):
     def __init__(self):
         super().__init__()
-        self.board = pedalboard.Pedalboard([pedalboard.Compressor(threshold_db=0, ratio=2,
-                                                                  attack_ms=10, release_ms=100),
+        self.board = pedalboard.Pedalboard([pedalboard.Compressor(threshold_db=0, ratio=4,
+                                                                  attack_ms=1, release_ms=50),
                                             pedalboard.Gain(gain_db=0)])
 
     def set_params(self, values):

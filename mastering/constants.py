@@ -9,7 +9,7 @@ PATH_TO_MASTERED_EMBEDDINGS = '../mastered_embeddings'
 # Duration of the chorus in seconds
 DURATION = 5
 # Target Loudness for Mastering
-TARGET_LOUDNESS = -7.0
+TARGET_LOUDNESS = -7
 
 # Equalizer
 NUM_ITERATIONS = 100 # Num Iterations used for eq optimization
