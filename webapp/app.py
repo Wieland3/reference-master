@@ -3,7 +3,6 @@ import webapp_constants
 import os
 from concurrent.futures import ThreadPoolExecutor
 import uuid
-import time
 
 import sys
 sys.path.append('../')
@@ -13,11 +12,6 @@ executor = ThreadPoolExecutor(1)
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = webapp_constants.UPLOAD_FOLDER
 
-'''
-embeddings = index_embeddings.IndexEmbeddings(38)
-embeddings.create_index()
-
-'''
 
 @app.route('/')
 def home():
@@ -62,4 +56,4 @@ def process_file(filename):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)

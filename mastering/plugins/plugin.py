@@ -1,4 +1,3 @@
-import pedalboard
 
 
 class Plugin:

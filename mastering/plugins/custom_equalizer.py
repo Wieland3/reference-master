@@ -1,5 +1,4 @@
 import pedalboard
-import matplotlib.pyplot as plt
 from mastering.plugins import plugin
 from mastering import optimizer
 from mastering import constants
