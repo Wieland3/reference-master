@@ -157,3 +157,6 @@ cython_debug/
 /mastered
 /spectrum_database
 /webapp/static
+
+# Shell Scripts
+docker-push.sh
