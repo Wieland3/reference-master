@@ -8,5 +8,5 @@ COPY mastered mastered
 COPY uploads uploads
 COPY spectrum_database spectrum_database
 WORKDIR /webapp
-EXPOSE 8000
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
+EXPOSE 8080
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
