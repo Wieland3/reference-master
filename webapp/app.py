@@ -1,14 +1,17 @@
 from flask import Flask, request, render_template, redirect, url_for, jsonify, send_file
 import webapp_constants
 import os
-from concurrent.futures import ThreadPoolExecutor
+from google.cloud import tasks_v2
 import uuid
 
 import sys
 sys.path.append('../')
 from mastering import master
 
-executor = ThreadPoolExecutor(1)
+# Set up Google Cloud Tasks client
+client = tasks_v2.CloudTasksClient()
+parent = client.queue_path('reference-master-392511', 'europe-west1', 'master-bg-process')
+
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = webapp_constants.UPLOAD_FOLDER
 
@@ -29,8 +32,14 @@ def upload_file():
     filename = id + '.wav'
     file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-    # Process file in background thread
-    executor.submit(process_file, filename)
+    # Create a task
+    task = {
+        'http_request': {
+            'http_method': 'POST',
+            'url': 'https://reference-master-xeb4mvg7na-lz.a.run.app/process/' + filename
+        }
+    }
+    client.create_task(request={"parent": parent, "task": task})
 
     # Return a response to the user
     return redirect(url_for('upload_done', filename=filename))
@@ -49,11 +58,13 @@ def download(filename):
   filename = os.path.join("../mastered", filename)
   return send_file(filename, as_attachment=True)
 
+@app.route('/process/<filename>', methods=['POST'])
 def process_file(filename):
     print("STARTING MASTERING")
     master.master(filename)
     print("MASTERING DONE")
+    return 'Mastering done', 200
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8000)
