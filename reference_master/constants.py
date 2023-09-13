@@ -3,6 +3,10 @@ Constants used for the reference master
 """
 
 import os
+import yaml
+
+# Smoothing for Song Distance
+LOOKBACK = 10
 
 # PROJECT ROOT
 PATH_TO_PROJECT_ROOT =  os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -15,10 +19,13 @@ PATH_TO_MASTERED_SONGS = os.path.join(PATH_TO_SONGS, 'mastered/')
 
 PATH_TO_WEBAPP_UPLOADS = '../webapp/uploads'
 
-# Duration of the chorus in seconds
-DURATION = 10
+# Path to yaml user settings
+PATH_TO_SETTINGS_YAML = os.path.join(PATH_TO_PROJECT_ROOT, "settings.yaml")
 
-# Equalizer
-NUM_ITERATIONS = 1 # Num Iterations used for eq optimization
-HP_FREQ = 20 # High Pass Filter Frequency
-LOOKBACK = 10 # Smoothing for Song Distance
+# Load settings from the YAML file
+with open(PATH_TO_SETTINGS_YAML, 'r') as settings_file:
+    settings = yaml.safe_load(settings_file)
+
+NUM_ITERATIONS = settings['NUM_ITERATIONS']
+HP_FREQ = settings['HP_FREQ']
+DURATION = settings['DURATION']

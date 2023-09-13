@@ -1,0 +1,6 @@
+# Number of epochs for optimization algorithm
+NUM_ITERATIONS: 50
+# High pass frequency for song
+HP_FREQ: 20
+# Duration of the chorus snippet that is taken from the audio
+DURATION: 10
