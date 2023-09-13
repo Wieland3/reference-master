@@ -1,3 +1,7 @@
+"""
+File contains code for the Clipper Plugin.
+"""
+
 import numpy as np
 import pedalboard
 from reference_master.utils import loudness
@@ -8,7 +12,7 @@ class Clipper(plugin.Plugin):
 
     def __init__(self):
         """
-        This class is a custom clipper that is used to clip the audio to a certain loudness
+        Initializes the Clipper Plugin
         """
         super().__init__()
         self.board = pedalboard.Pedalboard([pedalboard.Gain(gain_db=0), pedalboard.Clipping(-1.2)])
@@ -50,4 +54,3 @@ class Clipper(plugin.Plugin):
         params = self.find_loudness_settings(audio, sr, ref_loudness)
         self.set_params([params])
         return params
-

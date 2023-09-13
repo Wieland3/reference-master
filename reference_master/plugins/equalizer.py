@@ -1,12 +1,19 @@
+"""
+File contains code for the Equalizer Plugin.
+"""
+
+
 import pedalboard
 from reference_master.plugins import plugin
 from reference_master import optimizer
 from reference_master import constants
-from reference_master.utils import audio_utils, loudness, spectrum
 
 
 class Equalizer(plugin.Plugin):
     def __init__(self):
+        """
+        Initializes the Equalizer Plugin
+        """
         super().__init__()
         self.filters = [pedalboard.HighpassFilter(cutoff_frequency_hz=30)]
         self.filters += [pedalboard.PeakFilter(cutoff_frequency_hz=cutoff, gain_db=0, q=1) for cutoff in
@@ -15,12 +22,25 @@ class Equalizer(plugin.Plugin):
         self.board = pedalboard.Pedalboard(self.filters)
 
     def set_filter_params(self, filter_index, gain_db, cutoff_frequency_hz, q):
+        """
+        Set the parameters of an individual filter
+        :param filter_index: index of filter in the board
+        :param gain_db: gain in dB
+        :param cutoff_frequency_hz: cutoff frequency in Hz
+        :param q: q value of the filter
+        :return: None
+        """
         eq_filter = self.board[filter_index]
         eq_filter.gain_db = gain_db
         eq_filter.cutoff_frequency_hz = cutoff_frequency_hz
         eq_filter.q = q
 
     def set_params(self, values):
+        """
+        Set the parameters of the equalizer
+        :param values: list of parameters for filters in form [gain1, gain2, ..., gain12, cutoff1, cutoff2, ..., cutoff12, q1, q2, ..., q12]
+        :return: None
+        """
         num_filters = len(self.filters) - 1
         gain_idx_offset = num_filters
         q_idx_offset = num_filters * 2
@@ -44,43 +64,3 @@ class Equalizer(plugin.Plugin):
         self.set_params(params)
         print("Best settings: ", params)
         return params
-
-
-if __name__ == "__main__":
-
-    audio, sr = audio_utils.load_audio_file("../../tracks/raw_tracks/18.wav")
-    audio_max_mono, audio_max_stereo = audio_utils.preprocess_audio(audio, sr, 10)
-
-    audio_loudness = loudness.get_loudness(audio_max_mono, sr)
-
-    ref, sr_ref = audio_utils.load_audio_file("../../tracks/reference_tracks/02 - Sound of Madness.mp3")
-    ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, 10)
-
-    ref_max_mono = loudness.equal_loudness(ref_max_mono, sr_ref, audio_loudness)
-
-
-    eq = CustomEqualizer()
-
-    gain = [1, 1, -11, 1, 1, 6, 6]
-    freq = [100, 500, 750, 2000, 4000, 4000, 7500]
-    q = [2, 1, 3, 3, 1, 0.5, 1]
-
-    params = gain + freq + q
-
-    eq.set_params(params)
-
-    processed_max_mono = eq.process(audio_max_mono, sr)
-
-    spec_raw, freq = spectrum.create_spectrum(audio_max_mono, sr)
-    spec_processed, freq = spectrum.create_spectrum(processed_max_mono, sr)
-    spec_ref, freq = spectrum.create_spectrum(ref_max_mono, sr_ref)
-
-    #plt.plot(freq, spec_raw, label="raw")
-    plt.plot(freq, spec_processed, label="processed")
-    plt.plot(freq, spec_ref, label="ref")
-    plt.legend()
-    plt.xscale("log")
-    plt.show()
-
-
-
