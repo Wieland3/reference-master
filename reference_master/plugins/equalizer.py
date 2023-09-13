@@ -5,7 +5,7 @@ from reference_master import constants
 from reference_master.utils import audio_utils, loudness, spectrum
 
 
-class CustomEqualizer(plugin.Plugin):
+class Equalizer(plugin.Plugin):
     def __init__(self):
         super().__init__()
         self.filters = [pedalboard.HighpassFilter(cutoff_frequency_hz=30)]

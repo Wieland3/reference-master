@@ -4,7 +4,7 @@ from reference_master.utils import loudness
 from reference_master.plugins import plugin
 
 
-class CustomClipper(plugin.Plugin):
+class Clipper(plugin.Plugin):
 
     def __init__(self):
         """
