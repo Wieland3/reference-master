@@ -1,3 +1,7 @@
+"""
+File contains code for optimizing the parameters of a plugin
+"""
+
 from scipy.optimize import dual_annealing
 from reference_master.utils import audio_distance
 
