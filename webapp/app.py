@@ -6,7 +6,7 @@ import uuid
 
 import sys
 sys.path.append('../')
-from mastering import master
+from reference_master import master
 
 # Set up Google Cloud Storage client
 storage_client = storage.Client()

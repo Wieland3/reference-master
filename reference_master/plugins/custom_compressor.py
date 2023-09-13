@@ -1,7 +1,7 @@
 import pedalboard
 import numpy as np
-from mastering.plugins import plugin
-from mastering.utils import loudness
+from reference_master.plugins import plugin
+from reference_master.utils import loudness
 
 
 class CustomCompressor(plugin.Plugin):

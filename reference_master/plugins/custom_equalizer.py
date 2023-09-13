@@ -1,8 +1,8 @@
 import pedalboard
-from mastering.plugins import plugin
-from mastering import optimizer
-from mastering import constants
-from mastering.utils import audio_utils, loudness, spectrum
+from reference_master.plugins import plugin
+from reference_master import optimizer
+from reference_master import constants
+from reference_master.utils import audio_utils, loudness, spectrum
 
 
 class CustomEqualizer(plugin.Plugin):

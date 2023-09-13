@@ -1,6 +1,6 @@
 import pedalboard
 import numpy as np
-from mastering.plugins import plugin
+from reference_master.plugins import plugin
 
 class CustomSaturator(plugin.Plugin):
     def __init__(self):

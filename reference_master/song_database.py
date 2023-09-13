@@ -1,5 +1,5 @@
-from mastering import constants
-from mastering.utils import audio_distance, audio_utils, loudness, spectrum
+from reference_master import constants
+from reference_master.utils import audio_distance, audio_utils, loudness, spectrum
 import numpy as np
 import glob
 

@@ -1,5 +1,5 @@
 from scipy.optimize import dual_annealing, direct
-from mastering.utils import audio_distance
+from reference_master.utils import audio_distance
 
 def objective(params, plugin, raw, sr_raw, power_ref):
     plugin.set_params(params)

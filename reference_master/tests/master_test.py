@@ -1,6 +1,6 @@
-from mastering.utils import audio_utils, loudness, spectrum
-from mastering import constants, song_database
-from mastering.plugins import custom_equalizer, custom_clipper, custom_compressor, custom_saturator
+from reference_master.utils import audio_utils, loudness, spectrum
+from reference_master import constants, song_database
+from reference_master.plugins import custom_equalizer, custom_clipper, custom_compressor, custom_saturator
 import os
 import numpy as np
 import matplotlib.pyplot as plt

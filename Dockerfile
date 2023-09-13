@@ -2,7 +2,7 @@ FROM python:3.8
 COPY requirements.txt /
 RUN apt-get update && apt-get install -y libsndfile1
 RUN pip3 install -r /requirements.txt
-COPY reference-master mastering
+COPY reference_master mastering
 COPY webapp webapp
 COPY mastered mastered
 COPY uploads uploads

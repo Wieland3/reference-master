@@ -1,7 +1,7 @@
 import numpy as np
 import pedalboard
-from mastering.utils import loudness
-from mastering.plugins import plugin
+from reference_master.utils import loudness
+from reference_master.plugins import plugin
 
 
 class CustomClipper(plugin.Plugin):
