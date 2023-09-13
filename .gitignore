@@ -152,10 +152,8 @@ cython_debug/
 #.idea/
 
 #Folders
-/tracks
 /uploads
 /mastered
-/spectrum_database
 /webapp/static
 
 # Shell Scripts
