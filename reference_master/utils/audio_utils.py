@@ -1,3 +1,8 @@
+"""
+This file contains functions for loading and saving audio files as well as preprocessing them
+"""
+
+
 import soundfile as sf
 import numpy as np
 from reference_master.utils import loudness
@@ -60,6 +65,3 @@ def numpy_to_wav(audio, sr, file_path):
     :return: None
     """
     sf.write(file_path, audio, sr)
-
-
-

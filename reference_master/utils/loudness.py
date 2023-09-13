@@ -1,3 +1,8 @@
+"""
+File for calculating and normalizing loudness of audio signals
+"""
+
+
 import pyloudnorm
 
 

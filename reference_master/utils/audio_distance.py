@@ -23,6 +23,3 @@ def mse(a, b):
     :return: mean squared error
     """
     return np.mean((a - b) ** 2)
-
-
-
