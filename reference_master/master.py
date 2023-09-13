@@ -1,34 +1,23 @@
 from reference_master.utils import audio_utils, loudness, spectrum
-from reference_master import constants, song_database
+from reference_master import constants
 from reference_master.plugins import custom_equalizer, custom_clipper
 import os
 import numpy as np
 
 
-def master(audiofile):
+def master(raw_track, ref_track):
     duration = constants.DURATION
 
     # Load raw track
-    raw, sr_raw = audio_utils.load_audio_file("../uploads/" + audiofile)
+    raw, sr_raw = audio_utils.load_audio_file("../songs/raw/" + raw_track)
     raw_max_mono, raw_max_stereo = audio_utils.preprocess_audio(raw, sr_raw, duration)
 
-    # Load database
-    db = song_database.SpectrumDatabase()
-    db.load_spectrum_database()
-
-    specs = db.specs
-    print("SHAPE SPECS", specs.shape)
-
-    avg_spec = np.average(specs, axis=0)
-    print("AVG_SPEC SHAPE", avg_spec.shape)
-    raw_spec, freq = spectrum.create_spectrum(raw_max_mono, sr_raw)
-
-    avg_raw = np.average(raw_spec)
-    avg_ref = np.average(avg_spec)
-    dif = avg_raw - avg_ref
+    # Load reference track
+    ref, sr_ref = audio_utils.load_audio_file("../songs/references/" + ref_track)
+    ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, duration)
 
     # Reference Spectrum Calculation
-    power_ref = avg_spec + dif
+    power_ref, power_freq = spectrum.create_spectrum(ref_max_mono, sr_ref)
 
     print(power_ref.shape)
 
@@ -63,5 +52,7 @@ def master(audiofile):
     print(np.min(raw))
 
     # Save audio
-    audio_utils.numpy_to_wav(raw, sr_raw, os.path.join("../mastered", audiofile))
+    audio_utils.numpy_to_wav(raw, sr_raw, os.path.join("../songs/mastered", raw_track))
+
+master("raw_0.wav", "11 - Circle With Me.mp3")
 
