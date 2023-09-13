@@ -1,3 +1,8 @@
+"""
+File contains code for calculating the spectral distance between two audio signals
+"""
+
+
 import numpy as np
 from reference_master.utils import spectrum
 
