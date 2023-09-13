@@ -45,12 +45,12 @@ class SpectrumDatabase:
         self.specs = specs
         self.freqs = freqs
 
-    def load_spectrum_database(self):
+    def load_spectrum_database(self, path_to_db='../spectrum_database/db.npz'):
         """
         Loads the npz file of all the songs in the reference folder.
         :return:
         """
-        db = np.load('../spectrum_database/db.npz')
+        db = np.load(path_to_db)
         self.normalized_audio = db['normalized_audio']
         self.audio = db['audio']
         self.sr = db['sr']

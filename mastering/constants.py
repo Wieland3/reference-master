@@ -7,7 +7,7 @@ PATH_TO_WEBAPP_UPLOADS = '../webapp/uploads'
 PATH_TO_MASTERED_EMBEDDINGS = '../mastered_embeddings'
 
 # Duration of the chorus in seconds
-DURATION = 5
+DURATION = 10
 # Target Loudness for Mastering
 TARGET_LOUDNESS = -7
 
