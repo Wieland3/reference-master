@@ -22,6 +22,6 @@ class Plugin:
         Process the audio with the plugin
         :param audio: audio to process
         :param sr: sample rate of audio to process
-        :return:
+        :return: processed audio
         """
         return self.board(audio, sr)

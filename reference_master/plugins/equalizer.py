@@ -47,17 +47,15 @@ class Equalizer(plugin.Plugin):
         for i in range(num_filters):
             self.set_filter_params(i + 1, values[i], values[i + gain_idx_offset], values[i + q_idx_offset])
 
-    def find_set_settings(self, bounds, raw_mono, sr_raw, power_ref, maxiter=constants.NUM_ITERATIONS, verbose=True):
+    def find_set_settings(self, bounds, raw_mono, sr_raw, power_ref, maxiter=constants.NUM_ITERATIONS):
         """
         Finds the best settings for the Equalizer object
-        :param bounds:
-        :param raw_mono:
-        :param sr_raw:
-        :param power_ref:
-        :param maxiter:
-        :param verbose:
-        :param mode:
-        :return:
+        :param bounds: bounds for the parameters
+        :param raw_mono: mono version of the raw track
+        :param sr_raw: sample rate of the raw track
+        :param power_ref: reference power spectrum
+        :param maxiter: maximum number of iterations
+        :return: best settings for the equalizer
         """
         params = optimizer.dual_annealing_optimization(self, bounds, raw_mono, sr_raw, power_ref, maxiter=maxiter)
         params = [round(x, 1) for x in params.x]
