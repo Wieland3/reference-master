@@ -16,6 +16,14 @@ def master(raw_track, ref_track):
     ref, sr_ref = audio_utils.load_audio_file("../songs/references/" + ref_track)
     ref_max_mono, ref_max_stereo = audio_utils.preprocess_audio(ref, sr_ref, duration)
 
+    # Loudness Calculation
+    raw_loudness = loudness.get_loudness(raw_max_stereo, sr_raw)
+    ref_loudness = loudness.get_loudness(ref_max_stereo, sr_ref)
+
+    # Equalize Loudness
+    ref_max_loudness_adjusted_stereo = loudness.equal_loudness(ref_max_stereo, sr_ref, raw_loudness)
+    ref_max_mono, _ = audio_utils.preprocess_audio(ref_max_loudness_adjusted_stereo, sr_ref, None)
+
     # Reference Spectrum Calculation
     power_ref, power_freq = spectrum.create_spectrum(ref_max_mono, sr_ref)
 
@@ -35,7 +43,7 @@ def master(raw_track, ref_track):
 
     # Clipper
     clipper = custom_clipper.CustomClipper()
-    clipper.find_set_settings(raw_max_stereo, sr_raw, ref_loudness=constants.TARGET_LOUDNESS)
+    clipper.find_set_settings(raw_max_stereo, sr_raw, ref_loudness=ref_loudness)
 
     raw_max_stereo = clipper.process(raw_max_stereo, sr_raw)  # Apply Clipper to max track
     raw_max_mono, _ = audio_utils.preprocess_audio(raw_max_stereo, sr_raw, None)
