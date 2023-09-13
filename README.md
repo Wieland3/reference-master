@@ -22,7 +22,7 @@ Master and use loudness of reference Track
 ```python
 master("your-track.wav", "Bohemian Rhapsody.mp3")
 ```
-Master and specify loudness to master to 
+Alternatively, you can manually specify the target loudness of the song to be mastered
 
 ```python
 master("your-track.wav", "Bohemian Rhapsody.mp3", -7.0)
