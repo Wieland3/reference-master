@@ -1,6 +1,6 @@
 # reference-master
 
-Automated Music Mastering through an Optimization-Based Approach Using a Reference Track
+Automated Music Mastering through an Optimization-Based Approach
 
 ## Installation
 
