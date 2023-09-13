@@ -5,7 +5,7 @@ File contains code for the Equalizer Plugin.
 
 import pedalboard
 from reference_master.plugins import plugin
-from reference_master import optimizer
+from reference_master.mastering import optimizer
 from reference_master import constants
 
 
