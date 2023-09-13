@@ -9,4 +9,5 @@ COPY uploads uploads
 COPY spectrum_database spectrum_database
 WORKDIR /webapp
 EXPOSE 8080
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--timeout", "600", "app:app"]
+

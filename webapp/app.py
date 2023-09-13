@@ -1,12 +1,16 @@
 from flask import Flask, request, render_template, redirect, url_for, jsonify, send_file
 import webapp_constants
 import os
-from google.cloud import tasks_v2
+from google.cloud import tasks_v2, storage
 import uuid
 
 import sys
 sys.path.append('../')
 from mastering import master
+
+# Set up Google Cloud Storage client
+storage_client = storage.Client()
+BUCKET_NAME = 'reference-master-bucket'
 
 # Set up Google Cloud Tasks client
 client = tasks_v2.CloudTasksClient()
@@ -30,7 +34,8 @@ def upload_file():
 
     # Save the file to disk
     filename = id + '.wav'
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    blob = storage_client.bucket(BUCKET_NAME).blob(filename)
+    blob.upload_from_file(file)
 
     # Create a task
     task = {
@@ -50,19 +55,34 @@ def upload_done(filename):
 
 @app.route("/check_file/<filename>")
 def check_file(filename):
-  exists = os.path.isfile(os.path.join("../mastered", filename))
-  return jsonify(exists=exists)
+    blob = storage_client.bucket(BUCKET_NAME).get_blob('mastered' + filename)
+    if blob is not None:
+        return jsonify(exists=True)
+    else:
+        return jsonify(exists=False)
+
 
 @app.route("/download/<filename>")
 def download(filename):
-  filename = os.path.join("../mastered", filename)
-  return send_file(filename, as_attachment=True)
+    mastered_filename = 'mastered' + filename
+    blob = storage_client.bucket(BUCKET_NAME).get_blob(mastered_filename)
+    blob.download_to_filename(os.path.join("../mastered", mastered_filename))
+    mastered_filepath = os.path.join("../mastered", mastered_filename)
+    return send_file(mastered_filepath, as_attachment=True)
+
 
 @app.route('/process/<filename>', methods=['POST'])
 def process_file(filename):
-    print("STARTING MASTERING")
+
+    blob = storage_client.bucket(BUCKET_NAME).get_blob(filename)
+    blob.download_to_filename(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
     master.master(filename)
-    print("MASTERING DONE")
+
+    # uploading the mastered file back to GCS
+    blob = storage_client.bucket(BUCKET_NAME).blob('mastered' + filename)
+    blob.upload_from_filename(os.path.join("../mastered", filename))
+
     return 'Mastering done', 200
 
 
