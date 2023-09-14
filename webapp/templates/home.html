@@ -10,11 +10,6 @@
     <!-- mobile viewport -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- seo -->
-    <meta name="description" content="Master Your Song Online">
-    <meta name="keywords" content="Mastering, Master, Song, Online, Free">
-    <meta name="author" content="Master Your Song Online">
-
     <style>
         .rounded {
             border-radius: 16px;
@@ -52,10 +47,10 @@
       <div class="hero-body image">
         <div class="container has-text-centered">
           <h1 class="title is-1 white">
-            Master Your Song Online
+            Master Your Song
           </h1>
           <h2 class="subtitle is-5 white">
-            Upload your track and get your song mastered for free.
+            Upload your track and get your song mastered automatically.
           </h2>
           <br>
             <div class="file is-boxed is-centered">
@@ -64,13 +59,28 @@
                         <br>
                         <div class="file is-boxed is-normal">
                             <label class="file-label">
-                                <input class="file-input" type="file" name="file" id="uploadInput">
+                                <input class="file-input" type="file" name="raw_file" id="uploadRaw">
                                 <span class="file-cta">
                               <span class="file-icon">
                                 <i class="fas fa-upload"></i>
                               </span>
                               <span class="file-label">
                                 Upload Your Track
+                              </span>
+                            </span>
+                            </label>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="file is-boxed is-normal">
+                            <label class="file-label">
+                                <input class="file-input" type="file" name="ref_file" id="uploadRef">
+                                <span class="file-cta">
+                              <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                              </span>
+                              <span class="file-label">
+                                Upload Reference
                               </span>
                             </span>
                             </label>
@@ -86,12 +96,17 @@
 <script>
     window.addEventListener("load", () => {
         const form = document.querySelector("form");
-        const uploadInput = document.querySelector("#uploadInput");
+        const uploadRaw = document.querySelector("#uploadRaw");
+        const uploadRef = document.querySelector("#uploadRef");
 
-        uploadInput.addEventListener("change", () => {
-            form.submit();
-        });
-    })
+        const checkAndSubmit = () => {
+            if (uploadRaw.files.length > 0 && uploadRef.files.length > 0) {
+                form.submit();
+            }
+        };
+        uploadRaw.addEventListener("change", checkAndSubmit);
+        uploadRef.addEventListener("change", checkAndSubmit);
+    });
 </script>
 </body>
 </html>
