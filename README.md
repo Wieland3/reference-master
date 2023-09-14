@@ -1,14 +1,60 @@
 # reference-master
 
-Automated Music Mastering through an Optimization-Based Approach
+Automated Music Mastering through an Optimization-Based Approach. 
 
-## Installation
+Can either be used through python or as webapp through Docker or Python.
+
+![Webapp Screenshot](https://github.com/Wieland3/reference-master/blob/main/Resources/Screenshot.png?raw=true)
+
+
+
+## Usage
+
+Clone Repo 
+
+```
+git clone https://github.com/Wieland3/reference-master.git
+```
+
+Move into directory
+
+```
+cd reference-master
+```
+
+### Docker
+
+Run shell script to build the image 
+```
+sh docker-build-tag.sh
+```
+
+Run docker image 
+```
+docker run -p 8080:8080 reference-master:latest
+```
+
+Navigate to 
+```
+http://0.0.0.0:8080
+```
+
+
+### Python
+#### Installation
 
 ```python
 pip install -r requirements.txt
 ```
 
-## Usage
+#### Webapp
+
+```
+cd webapp
+python3 app.py
+```
+
+### Usage through Code
 
 Put the Song you want to master in the "songs/raw" folder 
 
