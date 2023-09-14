@@ -1,5 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for, jsonify, send_file
 import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from concurrent.futures import ThreadPoolExecutor
 from reference_master.mastering.master import master
 from reference_master import constants
