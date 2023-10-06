@@ -7,6 +7,10 @@ Can either be used through python or as webapp through Docker or Python.
 ![Webapp Screenshot](https://github.com/Wieland3/reference-master/blob/main/Resources/Screenshot.png?raw=true)
 
 
+## Samples 
+A short comparison video between different mastering services:
+
+https://youtu.be/6kvGeVtv1Cw?feature=shared
 
 ## Usage
 
